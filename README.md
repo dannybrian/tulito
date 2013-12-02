@@ -52,31 +52,31 @@ You enable tulito behaviors by attaching `data-tulito-*` attributes to your HTML
         data-tulito-class="back-pane"
         data-tulito-class="button"
 
-## Panes
+### Panes
 
 Panes are bits of content, like pages. 
 
 The `data-tulito-drag` attribute is for use on non-hidden panes, and lets them be dragged out of the way temporarily to reveal a backpane. They can have multiple directions, space-delimited. Backpanes get a `data-tulito-parent` attribute to identify the pane to which they "belong". The backpane shown on a drag will also depend on the backpane's `data-tulito-parentdrag` attribute, if multiple backpanes exist.
 
-## Hidden Panes
+### Hidden Panes
 
 These are hidden off screen, animated into view, and dragged or swiped off screen. Where they dwell depends on the `data-tulito-pos` attribute. The legal values of "left", "right", "up", and "down" will give you panes that are initially hidden in respective locations, must be opened with buttons, and then be dragged back to their original positions. Without this value, the pane will be visible at load-time (and should be treated as your "main view"). 
 
-## Back Panes
+### Back Panes
 
 This is a pattern that gives you a static (non-moving) pane that sits behind the others, and is normally lighter or darker than the rest of the content to temporarily display configuration or options. These are shown when the main content gets out of the way. For a backpane, the `data-tulito-parentdrag` attribute determines which backpane is shown when a pane is dragged — and any time it is dragged. In fact, normal panes will ONLY be draggable if there is a back pane that references them.
 
 Setting a button's `data-tulito-open` target to a backpane actually triggers the drag of the pane that is the back pane's parent, in the direction identified by its `data-tulito-pos` attribute.
 
-## Buttons
+### Buttons
 
 Buttons are simple, but tulito adds to them touch behaviors and touch delays, and attaches `-open` and `-close` behaviors as specified. If an `-open` or `-close` attribute refers to a pane, it will trigger the showing or closing of that pane. If it references a backpane, it triggers the drag of the pane that is the parent of that backpane, in the direction specified by the backpane.
 
-## Shoving
+### Shoving
 
 "Shoving" lets you relate the dragging or opening of a content pane to another pane in order to move them together. This usually takes the form of a slight offset of a back pane when the main pane is moved to give the impression of a shove. Shoving is enabled via the attribute `data-tulito-shove`, but this design is changing between now and "release".
 
-## API
+### API
 
 If all you want to do is get these behaviors, you can do it firstly through HTML. If you want instead to use tulito as the basis for your own events, you can register those using the API.
 
@@ -89,7 +89,7 @@ When?
 
 I'll separate these into issues at some point in the next few weeks.
 
-## TODOs
+### TODOs
 
 - Create a test suite.
 - Create a build that:
