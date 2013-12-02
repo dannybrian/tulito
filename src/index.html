@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+
+		<!-- not needed for cordova -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-touch-fullscreen" content="yes">
+	    <link rel="apple-touch-icon-precomposed" href="images/icons/57.png" />
+	    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/icons/72.png" />
+	    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/icons/114.png" />
+	    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/icons/144.png" />
+	
+		<!-- iPhone (Retina) -->
+		<link href="images/startup/320x480.jpg" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image">
+
+		<!-- iPhone 5 -->
+		<link href="images/startup/320x568.jpg"  media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image">
+
+		<!-- iPad Portrait -->
+		<link href="images/startup/768x1024.jpg" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 1)" rel="apple-touch-startup-image">
+
+		<!-- iPad Landscape -->
+		<link href="" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 1)" rel="apple-touch-startup-image">
+
+		<!-- iPad Portrait (Retina) -->
+		<link href="" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image">
+
+		<!-- iPad Landscape (Retina) -->
+		<link href="" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image">
+		
+		<!-- /not needed for cordova -->
+
+		<!-- local copy of fontawesome
+			<link href="ldeps/font-awesome-4.0.3/css/font-awesome.css" rel="stylesheet" />
+		-->
+		
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+		<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,600,200italic,400italic,600italic' rel='stylesheet' type='text/css'>
+		
+		<link rel="stylesheet/less" type="text/css" href="css/tulito.less" />
+		<script src="js/less-1.5.0.min.js" type="text/javascript"></script>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />		
+				
+        <title>Tulito</title>
+    </head>
+
+    <body>
+		<div data-tulito-id="left-pane" data-tulito-class="hidden-pane" data-tulito-pos="left" data-tulito-shove="main" class="hidden-pane">
+			<div class="tarrow"> <i class="fa fa-chevron-circle-right"></i> </div>
+			<div class="vcenter-cont">
+				<div class="vcenter">
+					<ul>
+					  <li>Fully locked-down control over browser scroll and zoom</li>
+					  <li>Automatic touch events with Hammer.js</li>
+				      <li>Native-like delayed button behaviors</li>
+				      <li>Draggable, swipe-able, shove-able content panes in any direction</li>
+					  <li>Smooth pane animations</li>
+					  <li>Hidden panes in any direction</li>
+					  <li>Back menu panes to the left and right</li>
+					  <li>Scrollable elements with momentum using iScroll (optional)</li>
+					  <li>Responsive scaling design between devices and orientations</li>
+					  <li>Compatible with any JavaScript or CSS library or framework</li>
+					  <li>Everything configured through simple HTML data attributes</li>
+				      <li>PhoneGap-ready</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		
+		<div data-tulito-id="right-pane" data-tulito-class="hidden-pane" data-tulito-pos="right">
+			<div class="vcenter-cont">
+				<div class="vcenter">
+					<p><i class="fa fa-quote-left fa-2x pull-left"></i>Modern Web technologies — HTML5, CSS3, vector icon sets, Web fonts, JavaScript libraries — make it easier to build great mobile apps, but putting the pieces together to get the layout, animation, and touch behaviors <u>just right</u> can still be a challenge. Tulito aims to give development teams a starting point for those behaviors, and a fastidiously simple design as a prototype from which developers can learn.  <i class="fa fa-quote-right"></i></p>
+				</div>
+			</div>
+			<div class="tarrow"> <i class="fa fa-chevron-circle-left"></i> </div>
+		</div>
+		
+		<div data-tulito-id="top-pane" data-tulito-class="hidden-pane" data-tulito-pos="up" class="hidden-pane">
+			<div class="vcenter-cont">
+				<div class="vcenter">
+					<p>Tulito is a free template and library by Danny Brian for building mobile apps with HTML5, CSS3, and JavaScript. It captures critical behaviors for creating a great mobile user experience, and gives you a starting point for your own clean design. Tulito uses the excellent Hammer.js, LESS, iScroll, Source Sans Pro, and Font Awesome projects to enhance functionality. (Of these, only Hammer.js is required.) It is compatible with any JavaScript or CSS library. It can be deployed via Web or PhoneGap.</p>
+					<p>Visit tulito.org to download and improve the template.</p>
+				</div>
+			</div>
+			<div class="tarrow"> <i class="fa fa-chevron-circle-down"></i></div>
+		</div>
+		
+		<div data-tulito-id="bottom-pane" data-tulito-class="hidden-pane" data-tulito-pos="down" class="hidden-pane">
+			<div class="vcenter-cont" style="width: 100%; text-align: center;">
+				<div class="vcenter" style="width: 250px; text-align: center;">
+					<i class="fa fa-flask" style="font-size: 250px; color: rgba(100,100,100,0.2);"> </i>
+				</div>
+			</div>
+			<div class="tarrow"> <i class="fa fa-chevron-circle-up"></i> </div>
+		</div>
+		
+		<div data-tulito-id="thanks-pane" data-tulito-class="hidden-pane" data-tulito-pos="down" class="hidden-pane">
+			<div class="vcenter-cont" style="width: 100%; text-align: center;">
+				<div class="vcenter" style="width: 250px; text-align: center;">
+					<p>No, <u>you</u> are cool.</p>
+				</div>
+			</div>
+			<div class="tarrow"> <i class="fa fa-chevron-circle-up"></i> </div>
+		</div>
+		
+		<div data-tulito-id="back-pane-left" data-tulito-class="back-pane" data-tulito-parentdrag="right" data-tulito-parent="main" data-tulito-shove="right">
+			<ul>
+				<li>Media</li>
+				<ul>
+					<li><i class="fa fa-fw fa-camera"></i>  Camera</li>
+					<li><i class="fa fa-fw fa-cloud-download"></i>  Cloud</li>
+					<li><i class="fa fa-fw fa-comment"></i>  Comments</li>
+					<li><i class="fa fa-fw fa-envelope"></i>  Messages</li>
+					<li><i class="fa fa-fw fa-music"></i>  Music</li>
+				</ul>
+				<li>Real World</li>
+				<ul>
+					<li><i class="fa fa-fw fa-money"></i> Money</li>
+					<li><i class="fa fa-fw fa-leaf"></i> Nature</li>
+					<li><i class="fa fa-fw fa-ticket"></i> Ticket</li>
+					<li><i class="fa fa-fw fa-trophy"></i> Awards</li>
+					<li><i class="fa fa-fw fa-shopping-cart"></i> Prizes</li>
+				</ul>
+				<li>Other</li>
+				<ul>
+					<li><i class="fa fa-fw fa-user"></i> User</li>
+					<li><i class="fa fa-fw fa-print"></i> Print</li>
+					<li><i class="fa fa-fw fa-search"></i> Search</li>
+					<li><i class="fa fa-fw fa-lock"></i> Lock</li>
+				</ul>
+			</ul>
+		</div>
+		
+		<div data-tulito-id="back-pane-right" data-tulito-class="back-pane" data-tulito-parentdrag="left" data-tulito-parent="main">
+			<ul class="right">
+				<li>Group One</li>
+				<ul>
+					<li>Category One</li>
+					<li>Some Configuration  </li>
+					<li>Another Category</li>
+					<li>Here's Even More</li>
+					<li>Thanks for Playing</li>
+				</ul>
+				<li>Group Two</li>
+				<ul>
+					<li>Category One</li>
+					<li>Some Configuration</li>
+					<li>Another Category</li>
+					<li>Here's Even More</li>
+					<li>Thanks for Playing</li>
+				</ul>
+				<li>Group Three</li>
+				<ul>
+					<li>Category One</li>
+					<li>Some Configuration</li>
+					<li>Another Category</li>
+					<li>Here's Even More</li>
+					<li>Thanks for Playing</li>
+				</ul>
+			</ul>
+		</div>
+		
+		<!-- this is the main screen -->
+        <div data-tulito-id="main" data-tulito-class="pane" class="app">
+			<div class="title-bar">
+				<div class="menu-button" data-tulito-class="button" data-tulito-open="back-pane-left"> <i class="fa fa-bars"></i> </div>
+				<p><span class="tlogo1">t</span><span class="tlogo2">u</span><span class="tlogo3">l</span><span class="tlogo4">i</span><span class="tlogo5">t</span><span class="tlogo6">o</span></p>
+				<div class="menu-button right" data-tulito-class="button" data-tulito-open="back-pane-right"> <i class="fa fa-cog"></i> </div>
+			</div>
+			
+			<div class="button-group">
+				<div data-tulito-class="button" data-tulito-open="left-pane" class="small" style="">Tulito Features</div>
+				<div data-tulito-class="button" data-tulito-open="right-pane" class="small">Tulito Philosophy</div>
+			</div>
+			<div class="button-group">
+				<div data-tulito-class="button" data-tulito-open="top-pane" class="small">About Tulito</div>
+				<div data-tulito-class="button" data-tulito-open="bottom-pane" class="small">A Work in Progress<span style="font-style: italic;"></span></div>
+			</div>
+			
+			<div class="hscroller-cont" id="hscroller">
+				<div class="hscroller">
+					<ul>
+						<li class="blank"> </li>
+						<li><i class="fa fa-html5"></i></li>
+						<li><i class="fa fa-github"></i></li>
+						<li><i class="fa fa-linkedin"></i></li>
+						<li><i class="fa fa-css3"></i></li>
+						<li><i class="fa fa-linux"></i></li>
+						<li><i class="fa fa-trello"></i></li>
+						<li><i class="fa fa-facebook"></i></li>
+						<li><i class="fa fa-puzzle-piece"></i></li>
+						<li><i class="fa fa-home"></i></li>
+						<li><i class="fa fa-heart-o"></i></li>
+						<li><i class="fa fa-key"></i></li>
+						<li><i class="fa fa-wheelchair"></i></li>
+						<li><i class="fa fa-magnet"></i></li>
+						<li><i class="fa fa-shield"></i></li>
+						<li><i class="fa fa-random"></i></li>
+						<li><i class="fa fa-square"></i></li>
+						<li><i class="fa fa-tachometer"></i></li>
+						<li><i class="fa fa-home"></i></li>
+						<li><i class="fa fa-chain"></i></li>
+						<li><i class="fa fa-truck"></i></li>
+						<li><i class="fa fa-road"></i></li>
+					</ul>
+				</div>
+			</div>
+			
+			<div class="hscroller-cont" id="hscroller2">
+				<div class="hscroller">
+					<ul>
+						<li class="blank"> </li>
+						<li><i class="fa fa-html5"></i></li>
+						<li><i class="fa fa-github"></i></li>
+						<li><i class="fa fa-linkedin"></i></li>
+						<li><i class="fa fa-css3"></i></li>
+						<li><i class="fa fa-linux"></i></li>
+						<li><i class="fa fa-trello"></i></li>
+						<li><i class="fa fa-facebook"></i></li>
+						<li><i class="fa fa-puzzle-piece"></i></li>
+						<li><i class="fa fa-home"></i></li>
+						<li><i class="fa fa-heart-o"></i></li>
+						<li><i class="fa fa-key"></i></li>
+						<li><i class="fa fa-wheelchair"></i></li>
+						<li><i class="fa fa-magnet"></i></li>
+						<li><i class="fa fa-shield"></i></li>
+						<li><i class="fa fa-random"></i></li>
+						<li><i class="fa fa-square"></i></li>
+						<li><i class="fa fa-tachometer"></i></li>
+						<li><i class="fa fa-home"></i></li>
+						<li><i class="fa fa-chain"></i></li>
+						<li><i class="fa fa-truck"></i></li>
+						<li><i class="fa fa-road"></i></li>
+					</ul>
+				</div>
+			</div>
+			
+			<div class="textarea-parent"><textarea placeholder="Enter your text here."></textarea></div>
+		
+			<div data-tulito-class="button" data-tulito-open="thanks-pane" class="big bottom on">Tulito is Cool</div>
+        </div>
+
+        <!--
+			// uncomment if you're using Cordova/PhoneGap.
+			<script type="text/javascript" src="cordova.js"></script>
+			<script type="text/javascript" src="phonegap.js"></script>
+		-->
+		
+		<script type="text/javascript" src="js/iscroll-min.js"></script>
+        <script type="text/javascript" src="js/hammer.min.js"></script>
+		<script type="text/javascript" src="js/tulito.js"></script>
+		<script type="text/javascript" src="js/index.js"></script>
+
+    </body>
+</html>
