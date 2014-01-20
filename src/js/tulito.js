@@ -294,7 +294,7 @@
 								}
 								
 								// turn off controls; note that we aren't excluding ourselves (node) here. That's because
-								// we're enabling our own cover too.
+								// we're disabling our own controls, too.
 								self._toggleControlsOffExcept(node._backpane);
 							}
 						}

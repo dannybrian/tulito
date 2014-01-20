@@ -11,7 +11,7 @@ document.addEventListener('deviceready', function() {
 var app = new Object;
 
 document.addEventListener('DOMContentLoaded', function() {
-	
+
 	// Add scrolling to elements with iScroll
 	var optionsMenu = new IScroll( document.querySelector('[data-tulito-id="back-pane-left"]'), { eventPassthrough: false, scrollX: false, scrollY: true, snap: false } );
 	app.hScroller1 = new IScroll('#hscroller1', { eventPassthrough: true, scrollX: true, scrollY: false, snap: false, probeType: 3 });
