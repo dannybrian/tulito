@@ -150,6 +150,10 @@ a:visited, a:active, a:hover {
 	margin-right: 0;
 }
 
+.hscroller li.ptarget {
+	background-color: #555;
+}
+
 .hscroller li.blank {
 	background: none;
 }

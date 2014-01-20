@@ -125,7 +125,7 @@
 			/* Shoving works differently for panes. A backpane with data-tulito-shove="yes" gets shoved
 			   immediately at load time, and the shove classes get removed when the parent pane is dragged. We 
 			   we need to set these classes here. */
-			var backpanes = document.querySelectorAll('[data-tulito-parent="' + node.getAttribute('data-tulito-id') + '"]');
+			var backpanes = document.querySelectorAll('[data-tulito-class="back-pane"][data-tulito-parent="' + node.getAttribute('data-tulito-id') + '"]');
 			for (var i = 0; i < backpanes.length; ++i) {
 				backpanes[i]._tx = backpanes[i]._ty = backpanes[i]._tz = 0;
 				var shove = backpanes[i].getAttribute('data-tulito-shove');
@@ -151,7 +151,7 @@
 					if (node._backpane) {
 						self._removeClass(node._backpane, 'shown');
 					}
-					var backpanes = document.querySelectorAll('[data-tulito-parent="' + node.getAttribute('data-tulito-id') + '"]');
+					var backpanes = document.querySelectorAll('[data-tulito-class="back-pane"][data-tulito-parent="' + node.getAttribute('data-tulito-id') + '"]');
 					for (var i = 0; i < backpanes.length; ++i) {
 						if (backpanes[i].getAttribute('data-tulito-parentdrag') === e.gesture.direction)
 						{ // what a pain in the back.
@@ -164,6 +164,10 @@
 								self.options.onBackPaneShown(node);
 							}
 							continue;
+						}
+						else
+						{
+							self._removeClass(backpanes[i], 'shown');
 						}
 					}
 				}
@@ -281,10 +285,6 @@
 						}
 						else
 						{
-							// Remove the backpane.
-							setTimeout(function() {
-								self._removeClass(node._backpane, 'shown');									
-							}, 300);
 							self._resetTranslate(node, true);
 							if (node._backpane && node._shove) {
 								self._removeClass(node._backpane, 'notransition');
@@ -313,10 +313,6 @@
 						}
 						else
 						{
-							// Remove the backpane.
-							setTimeout(function() {
-								self._removeClass(node._backpane, 'shown');									
-							}, 300);
 							self._resetTranslate(node);
 							if (node._backpane && node._shove) {
 								self._removeClass(node._backpane, 'notransition');
@@ -364,9 +360,8 @@
 									self._addClass(node._backpane, 'shovedright');
 								}
 							}
-							// Remove the backpane.
+							// Remove the backpane drag.
 							setTimeout(function() {
-								self._removeClass(node._backpane, 'shown');
 								self._removeClass(node, 'draggedleft');
 								self._removeClass(node, 'draggedright');									
 							}, 300);
@@ -485,9 +480,6 @@
 							if (self.options.onHiddenPaneHidden) {
 								self.options.onHiddenPaneHidden(node);
 							}
-							setTimeout(function() {
-								self._removeClass(node, 'shown');					
-							}, 300);
 							// mainscreen._resetTranslate();
 						}
 						else
@@ -506,9 +498,6 @@
 							if (self.options.onHiddenPaneHidden) {
 								self.options.onHiddenPaneHidden(node);
 							}
-							setTimeout(function() {
-								self._removeClass(node, 'shown');					
-							}, 300);
 							// mainscreen._resetTranslate();
 						}
 						else
@@ -633,11 +622,7 @@
 					if (self.options.onBackPaneHidden) {
 						self.options.onBackPaneHidden(node);
 					}
-					
-					setTimeout(function() {
-						self._removeClass(node, 'shown');					
-					}, 300);
-					
+										
 				}
 				
 				else
@@ -646,6 +631,12 @@
 					parent._backpane = node;
 					parent._shove = shove;
 					// node._thisdrag = e.gesture.direction;
+					
+					// hide all backpanes
+					var backpanes = document.querySelectorAll('[data-tulito-class="back-pane"]');
+					for (var i = 0; i < backpanes.length; ++i) {
+						self._removeClass(backpanes[i], 'shown');
+					}
 					
 					self._addClass(node, 'shown');
 					self._addClass(parent, 'opened');

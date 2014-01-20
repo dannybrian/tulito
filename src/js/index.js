@@ -7,13 +7,15 @@ document.addEventListener('deviceready', function() {
 	}, 1000);
 }, false);
 
+
+var app = new Object;
+
 document.addEventListener('DOMContentLoaded', function() {
 	
 	// Add scrolling to elements with iScroll
 	var optionsMenu = new IScroll( document.querySelector('[data-tulito-id="back-pane-left"]'), { eventPassthrough: false, scrollX: false, scrollY: true, snap: false } );
-	var hScroller = new IScroll('#hscroller', { eventPassthrough: true, scrollX: true, scrollY: false, snap: false });
-	var hScroller = new IScroll('#hscroller2', { eventPassthrough: true, scrollX: true, scrollY: false, snap: 'li' });
-	// FIXME: why does snap break?
+	app.hScroller1 = new IScroll('#hscroller1', { eventPassthrough: true, scrollX: true, scrollY: false, snap: false, probeType: 3 });
+	app.hScroller2 = new IScroll('#hscroller2', { eventPassthrough: true, scrollX: true, scrollY: false, snap: true, snapStepX: 64, probeType: 1 });
 	
 	// Initialize tulito
 	tulito.init(
@@ -21,6 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			onOrientationChange: function (e) {
 				// refresh iscroll elements (FIXME: a better way to pass the element that needs a refresh)
 				optionsMenu.refresh();
+				app.hScroller1.refresh();
+				app.hScroller2.refresh();
 			},
 			onBackPaneShown: function (node) {
 				// refresh iscroll elements
