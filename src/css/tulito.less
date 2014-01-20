@@ -61,6 +61,7 @@ body {
 	-ms-touch-action:none;
 }
 
+
 /*
    BUTTONS
 
@@ -129,6 +130,25 @@ body {
 		position: absolute;
 		width: @screenWidth - 21;
 		bottom: 12px;
+	}
+}
+
+li[data-tulito-class="button"]
+{
+	margin: 0;
+	padding: 0;
+	&.active {
+		background-color: #666;
+		i {
+			color: #fff;
+		}
+	}
+	&:active {
+		background-color: #666;
+		color: #fff;
+		i {
+			color: #fff;
+		}
 	}
 }
 
@@ -413,6 +433,7 @@ body {
 	
 }
 
+
 /* The only way to get proper margins around a scaling textarea: surround it with this parent div */
 .textarea-parent {
 	margin: 10px;
@@ -466,6 +487,16 @@ body {
 
 .nomouse {
 	pointer-events: none;
+}
+
+
+.inactive
+{
+	pointer-events: none;
+}
+
+.menu-button {
+	pointer-events: auto;
 }
 
 /* KEYFRAMES */

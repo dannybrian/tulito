@@ -89,8 +89,8 @@
 		// you're manipulating the DOM, you'll want to call it for the elements that you add.
 		this.apply = function (node) {
 			var tclass = node.getAttribute('data-tulito-class');
-			if (this._inits[tclass]) {
-				this._inits[tclass](node);
+			if (self._inits[tclass]) {
+				self._inits[tclass](node);
 			}
 			else
 			{
@@ -106,14 +106,24 @@
 			
 		// These are the functional initializers for node behaviors.
 		this._inits['button'] = function (node) {
+			// All three of these will take place with a normal tap.
 			Hammer(node).on("touch", function(e) {
+				// We need touch to happen for highlighting before :active takes place!
+				self._buttonTouch(node, e);
+			});
+			Hammer(node).on("tap", function(e) {
 				// A tap event waits. We need touch to happen immediately.
 				self._buttonTap(node, e);
 			});
+			Hammer(node).on("release", function(e) {
+				// To remove the active class.
+				self._buttonRelease(node, e);
+			});
+			
 		}
 		
 		this._inits['pane'] = function (node) {
-			
+
 			// The directions this pane can be dragged depends on whether there are backpanes
 			// that reference it.
 						
@@ -151,6 +161,7 @@
 					if (node._backpane) {
 						self._removeClass(node._backpane, 'shown');
 					}
+					
 					var backpanes = document.querySelectorAll('[data-tulito-class="back-pane"][data-tulito-parent="' + node.getAttribute('data-tulito-id') + '"]');
 					for (var i = 0; i < backpanes.length; ++i) {
 						if (backpanes[i].getAttribute('data-tulito-parentdrag') === e.gesture.direction)
@@ -281,6 +292,10 @@
 								else if (node._shove === 'left') {
 									self._removeClass(node._backpane, 'shovedright');
 								}
+								
+								// turn off controls; note that we aren't excluding ourselves (node) here. That's because
+								// we're enabling our own cover too.
+								self._toggleControlsOffExcept(node._backpane);
 							}
 						}
 						else
@@ -290,6 +305,10 @@
 								self._removeClass(node._backpane, 'notransition');
 								self._resetTranslate(node._backpane, true);
 							}
+							
+							setTimeout(function() {
+								self._toggleControlsOn();						
+							}, 200);
 						}
 					}
 
@@ -310,6 +329,10 @@
 									self._removeClass(node._backpane, 'shovedright');
 								}
 							}
+							
+							// note that we aren't excluding ourselves (node) here. That's because
+							// we're disabling our own controls too
+							self._toggleControlsOffExcept(node._backpane);
 						}
 						else
 						{
@@ -318,6 +341,12 @@
 								self._removeClass(node._backpane, 'notransition');
 								self._resetTranslate(node._backpane, true);
 							}
+							
+							// turn on controls
+							setTimeout(function() {
+								self._toggleControlsOn();						
+							}, 200);
+							
 						}
 					}
 
@@ -365,6 +394,11 @@
 								self._removeClass(node, 'draggedleft');
 								self._removeClass(node, 'draggedright');									
 							}, 300);
+							
+							// turn on controls
+							setTimeout(function() {
+								self._toggleControlsOn();						
+							}, 200);
 						}
 						else
 						{
@@ -481,6 +515,12 @@
 								self.options.onHiddenPaneHidden(node);
 							}
 							// mainscreen._resetTranslate();
+							
+							// turn controls on
+							setTimeout(function() {
+								self._toggleControlsOn();						
+							}, 200);
+							
 						}
 						else
 						{
@@ -499,6 +539,12 @@
 								self.options.onHiddenPaneHidden(node);
 							}
 							// mainscreen._resetTranslate();
+							
+							// turn on controls
+							setTimeout(function() {
+								self._toggleControlsOn();						
+							}, 200);
+							
 						}
 						else
 						{
@@ -517,16 +563,28 @@
 			// nothing to do here.
 		};
 		
+		// Highlight on touch so that :active doesn't cause a flicker.
+		this._buttonTouch = function (node, e) {
+			if (!node) { return; }
+			this._addClass(node, 'active');
+		};
+		
 		// This is the real-time button tap event.
 		this._buttonTap = function (node, e) {
 			if (!node) { return; }
-			this._addClass(node, 'active');
+			// this._addClass(node, 'active');
 			// For now, I'm going to determine these panes at runtime.
 			if (node.hasAttribute('data-tulito-open')) {
 				node.getAttribute('data-tulito-open').split(/\s+/).forEach(function(key) {
 					self._openPane(document.querySelector('[data-tulito-id="' + key + '"]'), e);
 				});
 			}
+		};
+		
+		// Turn off the highlight after a delay. Why still use tap above to trigger an event?
+		// Because that also knows the difference between a tap and other gestures.
+		this._buttonRelease = function (node, e) {
+			if (!node) { return; }
 			setTimeout(function() { self._removeClass(node, 'active') }, 200 );
 		};
 
@@ -557,6 +615,16 @@
 					}
 				}
 			
+				// deactivate all controls except this one (if they exist)
+				self._toggleControlsOffExcept(node);
+				
+				// hide all hidden panes
+				var hiddenpanes = document.querySelectorAll('[data-tulito-class="hidden-pane"]');
+				for (var i = 0; i < hiddenpanes.length; ++i) {
+					self._removeClass(hiddenpanes[i], 'shown');
+				}
+				
+				// show this one
 				self._addClass(node, 'shown');
 				
 				if (pos === "left") {
@@ -622,7 +690,11 @@
 					if (self.options.onBackPaneHidden) {
 						self.options.onBackPaneHidden(node);
 					}
-										
+					
+					setTimeout(function() {
+						self._toggleControlsOn();						
+					}, 200);
+
 				}
 				
 				else
@@ -631,6 +703,8 @@
 					parent._backpane = node;
 					parent._shove = shove;
 					// node._thisdrag = e.gesture.direction;
+					
+					self._toggleControlsOffExcept(node);
 					
 					// hide all backpanes
 					var backpanes = document.querySelectorAll('[data-tulito-class="back-pane"]');
@@ -830,7 +904,27 @@
 			}
 		}
 		
-
+		this._toggleControlsOffExcept = function (node) {
+			// deactivate all controls except this one
+			var controls = document.querySelectorAll('[data-tulito-class="button"], input, textarea, button, .hscroller-cont');
+			for (var i = 0; i < controls.length; ++i) {
+				self._addClass(controls[i], 'inactive');
+			}
+			if (node) {
+				var thiscontrols = node.querySelectorAll('[data-tulito-class="button"], input, textarea, button, .hscroller-cont');
+				for (var i = 0; i < thiscontrols.length; ++i) {
+					self._removeClass(thiscontrols[i], 'inactive');
+				}
+			}
+		}
+		
+		this._toggleControlsOn = function () {
+			var controls = document.querySelectorAll('[data-tulito-class="button"], input, textarea, button, .hscroller-cont');
+			for (var i = 0; i < controls.length; ++i) {
+				self._removeClass(controls[i], 'inactive');
+			}
+		}
+		
 		return this;
 	};
 
