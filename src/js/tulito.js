@@ -124,64 +124,22 @@
 			// Initiatize some reference caching for this node.
 			var ncache = self._getCache(node);
 			
-			/* Shoving works differently for panes. A backpane with data-tulito-shove="yes" gets shoved
+			/* Shoving works differently for panes. A backpane with data-tulito-shovedir gets shoved
 			   immediately at load time, and the shove classes get removed when the parent pane is dragged. We 
 			   we need to set these classes here. */
-			var backpanes = self._getBackpanes(node);
-			for (var i = 0; i < backpanes.length; ++i) {
-				var bcache = self._getCache(backpanes[i]);
-				var shovedir = backpanes[i].getAttribute('data-tulito-shovedir');
-				if (shovedir === "right") {
-					self._addClass(backpanes[i], 'shovedleft');
-					self._translateEnd(backpanes[i], -(self.options.shovedPaneGap), 0, 0 );
-				}
-				else if (shovedir === "left") {
-					self._addClass(backpanes[i], 'shovedright');
-					self._translateEnd(backpanes[i], self.options.shovedPaneGap, 0, 0 );
-				}
-			}
+			self._shoveBackpanes(node);
 		
 			// Disable transitions when a drag begins, and show the proper back pane.
 			Hammer(node).on("dragstart", function(e) {
-				// FIXME: we're not doing much caching here, and we could be.
-				
 				if (e.srcElement !== node) { return; }
 				
-				self._addClass(node, 'notransition'); 
-				
-				if (!ncache._opened) {
-					if (ncache._backpane) {
-						self._removeClass(ncache._backpane, 'shown');
-					}
-					
-					var backpanes = self._getBackpanes(node);
-					for (var i = 0; i < backpanes.length; ++i) {
-						if (backpanes[i].getAttribute('data-tulito-parentdrag') === e.gesture.direction)
-						{ // what a pain in the back.
-							ncache._backpane = backpanes[i];
-							ncache._shovedir = backpanes[i].getAttribute('data-tulito-shovedir');
-							ncache._thisdrag = e.gesture.direction;
-							self._addClass(backpanes[i], 'shown');
-							self._addClass(backpanes[i], 'notransition'); 
-							if (self.options.onBackPaneShown) {
-								self.options.onBackPaneShown(node);
-							}
-							continue;
-						}
-						else
-						{
-							self._removeClass(backpanes[i], 'shown');
-						}
-					}
+				if (ncache._opened) {
+					self._startOpenPaneDrag(e, node, ncache);
 				}
 				else
 				{
-					self._addClass(node, 'notransition'); 
-					if (ncache._backpane && ncache._shovedir) {
-						self._addClass(ncache._backpane, 'notransition'); 
-					}
+					self._startClosedPaneDrag(e, node, ncache);
 				}
-				
 			});
 
 			// During the drag, translate the pane directly. We shove the backpane, if enabled.
@@ -192,239 +150,42 @@
 				
 				// The pane is not open, and we're moving in the right direction. Drag away.
 				// We constrain the drag so that the opposite end doesn't get exposed.
+				// (Remember, open != shown or opening. It's not open until it's done being opened.)
 				if (ncache._opened === false && e.gesture.direction === ncache._thisdrag) {
-					if (ncache._thisdrag === "right") {
-						self._translate(node, e.gesture.deltaX, 0, 0, { xMax: (window.innerWidth - self.options.openedPaneGap) * 1.1, xMin: 0 });
-						if (ncache._backpane && ncache._shovedir) {
-							if (ncache._shovedir === 'right') {
-								self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0, { xMax: 0, xMin: -(self.options.shovedPaneGap) } );
-							}
-							else if (ncache._shovedir === 'left') {
-								self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0, { xMax: self.options.shovedPaneGap, xMin: 0 } );
-							}
-						}							
-					}
-					else if (ncache._thisdrag === "left") {
-						self._translate(node, e.gesture.deltaX, 0, 0, { xMax: window.innerWidth, xMin: -(window.innerWidth - (self.options.openedPaneGap * 0.9)) });							
-						if (ncache._backpane && ncache._shovedir) {
-							if (ncache._shovedir === 'right') {
-								self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0 );
-							}
-							else if (ncache._shovedir === 'left') {
-								self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0 );
-							}
-						}
-					}
-					/* // for now, not allowing up or down.
-					else if (drag === "up" || drag === "down")
-					{
-						self._translate(node, 0, e.gesture.deltaY, 0, { yMax: window.innerHeight - self.options.openedPaneGap, yMin: 0 });						
-					}
-					*/
+					self._dragPane(e, node, ncache);
 				}
+				
 				// The pane is already open, and we're moving in the opposite direction. Drag away.
 				// We constrain the drag so that the opposite end doesn't get exposed.
-				
-				if (ncache._opened === true && e.gesture.direction !== ncache._thisdrag) {
-					
-					if (ncache._thisdrag === "right" && e.gesture.direction === "left") {
-						self._translate(node, e.gesture.deltaX, 0, 0, { xMax: window.innerWidth - self.options.openedPaneGap, xMin: 0 });													
-						if (ncache._backpane && ncache._shovedir) {
-							if (ncache._shovedir === 'left') {
-								self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0 );
-							}
-							else if (ncache._shovedir === 'right') {
-								self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0 );
-							}
-						}
-					}
-					else if (ncache._thisdrag === "left" && e.gesture.direction === "right")
-					{
-						self._translate(node, e.gesture.deltaX, 0, 0, { xMax: 0, xMin: -(window.innerWidth - self.options.openedPaneGap) });							
-						if (ncache._backpane && ncache._shovedir) {
-							if (ncache._shovedir === 'left') {
-								self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0 );
-							}
-							else if (ncache._shovedir === 'right') {
-								self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0 );
-							}
-						}
-					}
-					/* for now, not allowing up or down.
-					else if ((drag === "up" && e.gesture.direction === "down") ||
-					          (drag === "down" && e.gesture.direction === "up"))
-					{
-						self._translate(node, 0, e.gesture.deltaY, 0, { yMax: window.innerHeight, yMin: 0 });						
-					}
-					*/
+				else if (ncache._opened === true && e.gesture.direction !== ncache._thisdrag) {
+					self._dragPane(e, node, ncache, true);
 				}
+
 			});
 		
 			// When the drag ends, set the CSS transform to put the pane smoothly in its place.
 			Hammer(node).on("dragend", function(e) {
-				/* FIXME: this needs serious cleanup, lots of duplicate logic here. */
 				if (e.srcElement !== node) { return; }
 				
-				if (ncache._opened === false && e.gesture.direction === ncache._thisdrag) {
-					self._removeClass(node, 'notransition');
-					self._resetTranslate(node, true); // keep our translate cache.
-			
-					if (ncache._thisdrag === "right") {
-						if (Math.abs(e.gesture.deltaX) > swipeDist) {
-							self._addClass(node, 'opened draggedright');
-							ncache._opened = true;
-							self._translateEnd(node, window.innerWidth - self.options.openedPaneGap, 0, 0, null, true);
-							if (ncache._backpane && ncache._shovedir) {
-								self._removeClass(ncache._backpane, 'notransition');
-								self._resetTranslate(ncache._backpane, true);
-								self._translateEnd(ncache._backpane, 0, 0, 0, null, true);
-								if (ncache._shovedir === 'right') {
-									self._removeClass(ncache._backpane, 'shovedleft');
-								}
-								else if (node._shovedir === 'left') {
-									self._removeClass(ncache._backpane, 'shovedright');
-								}
-								
-								// turn off controls; note that we aren't excluding ourselves (node) here. That's because
-								// we're disabling our own controls, too.
-								self._toggleControlsOffExcept(ncache._backpane);
-							}
-						}
-						else
-						{
-							self._resetTranslate(node, true);
-							if (ncache._backpane && ncache._shovedir) {
-								self._removeClass(ncache._backpane, 'notransition');
-								self._resetTranslate(ncache._backpane, true);
-							}
-							
-							setTimeout(function() {
-								self._toggleControlsOn();						
-							}, 200);
-						}
-					}
-
-					else if (ncache._thisdrag === "left") {
-						if (Math.abs(e.gesture.deltaX) > swipeDist) {
-							self._addClass(node, 'opened draggedleft');
-							ncache._opened = true;
-							self._translateEnd(node, -(window.innerWidth - self.options.openedPaneGap), 0, 0, null, true);
-							if (ncache._backpane && ncache._shovedir) {
-								self._removeClass(ncache._backpane, 'notransition');
-								self._resetTranslate(ncache._backpane, true);
-								self._translateEnd(ncache._backpane, 0, 0, 0, null, true);
-								
-								if (ncache._shovedir === 'right') {
-									self._removeClass(ncache._backpane, 'shovedleft');
-								}
-								else if (ncache._shovedir === 'left') {
-									self._removeClass(ncache._backpane, 'shovedright');
-								}
-							}
-							
-							// note that we aren't excluding ourselves (node) here. That's because
-							// we're disabling our own controls too
-							self._toggleControlsOffExcept(ncache._backpane);
-						}
-						else
-						{
-							self._resetTranslate(node);
-							if (ncache._backpane && ncache._shovedir) {
-								self._removeClass(ncache._backpane, 'notransition');
-								self._resetTranslate(ncache._backpane, true);
-							}
-							
-							// turn on controls
-							setTimeout(function() {
-								self._toggleControlsOn();						
-							}, 200);
-							
-						}
-					}
-
-					/* for now, we aren't allowing up or down.
-					if (drag === "up" || drag === "down") {
-						if (Math.abs(e.gesture.deltaY) > swipeDist) {
-							self._addClass(node, 'opened');
-							node._opened = true;
-							self._translateEnd(node, 0, window.innerWidth - self.options.openedPaneGap, 0, null, true);
-						}
-						else
-						{
-							self._resetTranslate(node);
-						}
-					}
-					*/
+				// The pane is open and the drag was in the closing direction.
+				if (ncache._opened === true && e.gesture.direction !== ncache._thisdrag)
+				{
+					self._endOpenPaneDrag(e, node, ncache);
 				}
-
-				else if (ncache._opened === true && e.gesture.direction !== ncache._thisdrag) {
-					self._removeClass(node, 'notransition');
-					self._resetTranslate(node, true);
-					if (ncache._thisdrag === "left" || ncache._thisdrag === "right") {
-						if (Math.abs(e.gesture.deltaX) > swipeDist) {
-							self._removeClass(node, 'opened');
-							self._resetTranslate(node);
-							ncache._opened = false;
-							if (self.options.onBackPaneHidden) {
-								self.options.onBackPaneHidden(node);
-							}
-							if (ncache._backpane && ncache._shovedir) {
-								self._removeClass(ncache._backpane, 'notransition');
-								self._resetTranslate(ncache._backpane, true);
-								
-								if (ncache._shovedir === 'right') {
-									self._translateEnd(ncache._backpane, -(self.options.shovedPaneGap), 0, 0 );
-									self._addClass(ncache._backpane, 'shovedleft');
-								}
-								else if (ncache._shovedir === 'left') {
-									self._translateEnd(ncache._backpane, self.options.shovedPaneGap, 0, 0 );
-									self._addClass(ncache._backpane, 'shovedright');
-								}
-							}
-							// Remove the backpane drag.
-							setTimeout(function() {
-								self._removeClass(node, 'draggedleft');
-								self._removeClass(node, 'draggedright');									
-							}, 300);
-							
-							// turn on controls
-							setTimeout(function() {
-								self._toggleControlsOn();						
-							}, 200);
-						}
-						else
-						{
-							if (ncache._backpane && ncache._shovedir) {
-								self._removeClass(ncache._backpane, 'notransition');
-								self._resetTranslate(ncache._backpane, true);
-								if (ncache._backpane && ncache._shovedir) {
-									self._removeClass(ncache._backpane, 'notransition');
-									self._resetTranslate(ncache._backpane, true);
-								}
-							}
-						}
-					}
-					/* not supporting up and down yet */
-					/*
-					if (node._thisdrag === "up" || node._thisdrag === "down") {
-						if (Math.abs(e.gesture.deltaY) > swipeDist) {
-							self._removeClass(node, 'opened');
-							self._resetTranslate(node);
-							node._opened = false;
-							// Remove the backpane.
-							setTimeout(function() {
-								self._removeClass(node._backpane, 'shown');					
-							}, 300);
-						}
-					}
-					*/
+				// The pane is closed and the drag was in the opening direction
+				else if (ncache._opened === false && e.gesture.direction === ncache._thisdrag)
+				{
+					self._endClosedPaneDrag(e, node, ncache);
 				}
+				// probably can't get here, but just in case
 				else
 				{
 					self._resetTranslate(node, true);
 				}
 			});
-		};  // end of pane
+			
+		};  // end of pane pattern
+		
 		
 		this._inits['hidden-pane'] = function (node) {
 			
@@ -589,176 +350,14 @@
 			var tclass = node.getAttribute('data-tulito-class');
 			if (tclass === 'hidden-pane')
 			{
-				var pos = node.getAttribute('data-tulito-pos');
-				
-				// They can shove other panes as they move.
-				/* FIXME: the * 1.1 here was meant to smooth out the drag. If you look closely, you can
-			       see that the up/down hidden pane drags are smoother than the left/right drags, and this 
-			       is because it takes a moment for the gesture delta to catch up to the extra distance.
-			       But so far, it's not working as well for left/right. */
-			
-				var shove = node.getAttribute('data-tulito-shove');
-				var shoveel = document.querySelector('[data-tulito-id="' + shove + '"]');
-				ncache._shoveel = shoveel;
-				
-				// FIXME: consolidate this retrieval above of the shove element.
-				if (shove) {
-					if (pos === "left") {
-						self._addClass(ncache._shoveel, 'shovedright');
-						self._translateEnd(ncache._shoveel, self.options.shovedPaneGap * 1.1, 0, 0, null, true);
-					}
-					else if (pos === "right") {
-						self._addClass(ncache._shoveel, 'shovedleft');
-						self._translateEnd(ncache._shoveel, -(self.options.shovedPaneGap * 1.1), 0, 0, null, true);
-					}
-				}
-			
-				// deactivate all controls except this one (if they exist)
-				self._toggleControlsOffExcept(node);
-				
-				// hide all hidden panes
-				var hiddenpanes = document.querySelectorAll('[data-tulito-class="hidden-pane"]');
-				for (var i = 0; i < hiddenpanes.length; ++i) {
-					self._removeClass(hiddenpanes[i], 'shown');
-				}
-				
-				// show this one
-				self._addClass(node, 'shown');
-				
-				if (pos === "left") {
-					self._translateEnd(node, -(self.options.openedHiddenPaneGap), 0, 0, null, true);
-				}
-				else if (pos === "right") {
-					self._translateEnd(node, self.options.openedHiddenPaneGap, 0, 0, null, true);
-				}
-				else if (pos === "up") {
-					self._translateEnd(node, 0, self.options.openedHiddenPaneGap, 0, null, true);
-				}
-				else if (pos === "down") {
-					self._translateEnd(node, 0, -(self.options.openedHiddenPaneGap), 0, null, true);
-				}
-				
-				if (self.options.onHiddenPaneShown) {
-					self.options.onHiddenPaneShown(node);
-				}
-				setTimeout(function() { self._addClass(node, 'opened'); }, 1);
+				self._openHiddenPane(e, node, ncache);
 			}
 			
 			// But if it's a back pane, we need instead to manipulate the parent 
 			// that it references. We also try to make the toggle close behavior work.
 			else if (tclass === 'back-pane')
 			{	
-				var parentid = node.getAttribute('data-tulito-parent');
-				var parent = document.querySelector('[data-tulito-id="' + parentid + '"]');
-				var shovedir = node.getAttribute('data-tulito-shovedir');
-				var pcache = self._getCache(parent);
-							
-				if (pcache._opened) {
-					if (shovedir) {
-						self._removeClass(node, 'notransition');
-						self._resetTranslate(node);
-					}
-					var drag = node.getAttribute('data-tulito-parentdrag');
-					if (drag === "left") {
-						self._removeClass(parent, 'draggedleft');
-						if (shovedir === 'right') {
-							self._addClass(node, 'shovedleft');
-							self._translateEnd(node, -(self.options.shovedPaneGap), 0, 0, null, true);
-						}
-						else if (shovedir === 'left') {
-							self._addClass(node, 'shovedright');
-							self._translateEnd(node, self.options.shovedPaneGap, 0, 0, null, true);
-						}
-					}
-					else if (drag === "right") {
-						self._removeClass(parent, 'draggedright');
-						if (shovedir === 'right') {
-							self._addClass(node, 'shovedleft');
-							self._translateEnd(node, -(self.options.shovedPaneGap), 0, 0, null, true);
-						}
-						else if (shovedir === 'left') {
-							self._addClass(node, 'shovedright');
-							self._translateEnd(node, self.options.shovedPaneGap, 0, 0, null, true);
-						}					
-					}
-					
-					self._removeClass(parent, 'opened');
-					pcache._opened = false;
-					self._resetTranslate(parent);
-					
-					if (self.options.onBackPaneHidden) {
-						self.options.onBackPaneHidden(node);
-					}
-					
-					setTimeout(function() {
-						self._toggleControlsOn();						
-					}, 200);
-
-				}
-				
-				else
-				{
-					// Show the backpane, then move the parent out of its way.
-					pcache._backpane = node;
-					pcache._shovedir = shovedir;
-					// node._thisdrag = e.gesture.direction;
-					
-					self._toggleControlsOffExcept(node);
-					
-					// hide all backpanes
-					var backpanes = document.querySelectorAll('[data-tulito-class="back-pane"]');
-					for (var i = 0; i < backpanes.length; ++i) {
-						self._removeClass(backpanes[i], 'shown');
-					}
-					
-					self._addClass(node, 'shown');
-					self._addClass(parent, 'opened');
-					pcache._opened = true;
-					
-					self._resetTranslate(parent, true);
-					
-					if (shovedir) {
-						self._removeClass(node, 'notransition');
-						self._resetTranslate(node, true);						
-					}
-					
-					if (self.options.onBackPaneShown) {
-						self.options.onBackPaneShown(node);
-					}
-					
-					
-					// We also need to set some stuff up in case you want to drag it back, 
-					// and this depends on the drag/position.
-					var pos = node.getAttribute('data-tulito-parentdrag');
-					if (pos === 'right') {
-						pcache._thisdrag = 'right';
-						self._addClass(parent, 'draggedright');
-						self._translateEnd(parent, window.innerWidth - self.options.openedPaneGap, 0, 0, null, true);
-						if (shovedir === 'left') {
-							self._removeClass(node, 'shovedright');
-							self._translateEnd(node, 0, 0, 0, null, true);
-						}
-						else if (shovedir === 'right') {
-							self._removeClass(node, 'shovedleft');
-							self._translateEnd(node, 0, 0, 0, null, true);
-						}
-					}
-					
-					// FIXME
-					else if (pos === 'left') {
-						pcache._thisdrag = 'left';
-						self._addClass(parent, 'draggedleft');	
-						self._translateEnd(parent, -(self.options.openedPaneGap), 0, 0, null, true);						
-						if (shovedir === 'left') {
-							self._removeClass(node, 'shovedright');
-							self._translateEnd(node, 0, 0, 0, null, true);
-						}
-						else if (shovedir === 'right') {
-							self._removeClass(node, 'shovedleft');
-							self._translateEnd(node, 0, 0, 0, null, true);
-						}
-					}
-				}
+				self._openBackPane(e, node, ncache);
 			}
 			
 			// mainscreen._translate(window.innerWidth / 5, 0, 0, 0);
@@ -780,6 +379,7 @@
 		}
 		
 		this._translate = function(node, x, y, z, constraints) {
+						
 			/*
 			this._style.webkitTransitionDuration = 
 		    this._style.MozTransitionDuration = 
@@ -790,6 +390,7 @@
 			*/	
 			
 			var ncache = this._getCache(node);
+			
 			var tx = ncache._tx + x;
 			var ty = ncache._ty + y;
 			var tz = ncache._tz + z;
@@ -961,6 +562,404 @@
 			else
 			{
 				return document.querySelectorAll('[data-tulito-class="back-pane"]');
+			}
+		};
+		
+		this._shoveBackpanes = function (node) {
+			var backpanes = self._getBackpanes(node);
+			for (var i = 0; i < backpanes.length; ++i) {
+				var bcache = self._getCache(backpanes[i]);
+				var shovedir = backpanes[i].getAttribute('data-tulito-shovedir');
+				if (shovedir === "right") {
+					self._addClass(backpanes[i], 'shovedleft');
+					self._translateEnd(backpanes[i], -(self.options.shovedPaneGap), 0, 0 );
+				}
+				else if (shovedir === "left") {
+					self._addClass(backpanes[i], 'shovedright');
+					self._translateEnd(backpanes[i], self.options.shovedPaneGap, 0, 0 );
+				}
+			}
+		};
+		
+		this._startClosedPaneDrag = function (e, node, ncache) {
+			self._addClass(node, 'notransition'); 
+			
+			if (ncache._backpane) {
+				self._removeClass(ncache._backpane, 'shown');
+			}
+			
+			// get any backpanes that belong to this node.
+			var backpanes = self._getBackpanes(node);
+			for (var i = 0; i < backpanes.length; ++i) {
+				if (backpanes[i].getAttribute('data-tulito-parentdrag') === e.gesture.direction)
+				{
+					// this backpane is for the drag direction, so show it, cache it, and disable
+					// transitions.
+					ncache._backpane = backpanes[i];
+					ncache._shovedir = backpanes[i].getAttribute('data-tulito-shovedir');
+					ncache._thisdrag = e.gesture.direction;
+					self._addClass(backpanes[i], 'shown');
+					self._addClass(backpanes[i], 'notransition'); 
+					if (self.options.onBackPaneShown) {
+						self.options.onBackPaneShown(node);
+					}
+					continue;
+				}
+				else
+				{
+					self._removeClass(backpanes[i], 'shown');
+				}
+			}
+		};
+		
+		this._startOpenPaneDrag = function (e, node, ncache) {
+			// This pane is open, so just disable transitions on it and any backpane
+			// to prepare for the drag.
+			self._addClass(node, 'notransition'); 
+			if (ncache._backpane && ncache._shovedir) {
+				self._addClass(ncache._backpane, 'notransition'); 
+			}
+		};
+		
+		this._dragPane = function (e, node, ncache, reverse) { 
+			// _thisdrag is the direction of the open, not the direction being dragged currently.
+			if (ncache._thisdrag === "right") {
+				self._translate(node, e.gesture.deltaX, 0, 0, { xMax: (window.innerWidth - self.options.openedPaneGap) * 1.1, xMin: 0 });
+				if (ncache._backpane && ncache._shovedir) {
+					if (ncache._shovedir === 'right') {
+						self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0, { xMax: 0, xMin: -(self.options.shovedPaneGap) } );
+					}
+					else if (ncache._shovedir === 'left') {
+						self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0, { xMax: self.options.shovedPaneGap, xMin: 0 } );
+					}
+				}							
+			}
+			else if (ncache._thisdrag === "left") { 
+				if (reverse) {
+					// in this case, we need to stop a close-dragging pane from going past 0.
+					self._translate(node, e.gesture.deltaX, 0, 0, { xMax: 0, xMin: -(window.innerWidth - self.options.openedPaneGap) } );							
+				}
+				else
+				{
+					self._translate(node, e.gesture.deltaX, 0, 0, { xMax: window.innerWidth, xMin: -(window.innerWidth - (self.options.openedPaneGap * 0.9)) });							
+				}
+				if (ncache._backpane && ncache._shovedir) {
+					if (ncache._shovedir === 'right') {
+						self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0 );
+					}
+					else if (ncache._shovedir === 'left') { // FIXME: why is this not different with reverse? Maybe just needs an explanation.
+						self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0 );
+					}
+				}
+			}
+			
+			/* // for now, not allowing up or down.
+			else if (drag === "up" || drag === "down")
+			{
+				self._translate(node, 0, e.gesture.deltaY, 0, { yMax: window.innerHeight - self.options.openedPaneGap, yMin: 0 });						
+			}
+			*/
+		};
+		
+		this._endOpenPaneDrag = function (e, node, ncache) {
+			
+			self._removeClass(node, 'notransition');
+			self._resetTranslate(node, true);
+			
+			// the drag was long enough to close the pane.	
+			if (Math.abs(e.gesture.deltaX) > swipeDist) {
+				self._removeClass(node, 'opened');
+				self._resetTranslate(node);
+				ncache._opened = false;
+				if (self.options.onBackPaneHidden) {
+					self.options.onBackPaneHidden(node);
+				}
+				if (ncache._backpane && ncache._shovedir) {
+					self._removeClass(ncache._backpane, 'notransition');
+					self._resetTranslate(ncache._backpane, true);
+					
+					if (ncache._shovedir === 'right') {
+						self._translateEnd(ncache._backpane, -(self.options.shovedPaneGap), 0, 0 );
+						self._addClass(ncache._backpane, 'shovedleft');
+					}
+					else if (ncache._shovedir === 'left') {
+						self._translateEnd(ncache._backpane, self.options.shovedPaneGap, 0, 0 );
+						self._addClass(ncache._backpane, 'shovedright');
+					}
+				}
+				// Remove the backpane drag.
+				setTimeout(function() {
+					self._removeClass(node, 'draggedleft');
+					self._removeClass(node, 'draggedright');									
+				}, 300);
+				
+				// turn on controls
+				setTimeout(function() {
+					self._toggleControlsOn();						
+				}, 200);
+			}
+			// the drag wasn't long enough, so keep the pane open.
+			else
+			{
+				if (ncache._backpane && ncache._shovedir) {
+					self._removeClass(ncache._backpane, 'notransition');
+					self._resetTranslate(ncache._backpane, true);
+					if (ncache._backpane && ncache._shovedir) {
+						self._removeClass(ncache._backpane, 'notransition');
+						self._resetTranslate(ncache._backpane, true);
+					}
+				}
+			}
+			
+			/* not supporting up and down yet */
+			/*
+			if (node._thisdrag === "up" || node._thisdrag === "down") {
+				if (Math.abs(e.gesture.deltaY) > swipeDist) {
+					self._removeClass(node, 'opened');
+					self._resetTranslate(node);
+					node._opened = false;
+					// Remove the backpane.
+					setTimeout(function() {
+						self._removeClass(node._backpane, 'shown');					
+					}, 300);
+				}
+			}
+			*/
+		};
+		
+		this._endClosedPaneDrag = function (e, node, ncache) {
+			
+			self._removeClass(node, 'notransition');
+			self._resetTranslate(node, true); // keep our translate cache.
+
+			// the drag went far enough to open the pane.
+			if (Math.abs(e.gesture.deltaX) > swipeDist) {
+				self._addClass(node, 'opened');
+				ncache._opened = true;
+				
+				if (ncache._thisdrag === "right") {
+					self._addClass(node, 'draggedright');
+					self._translateEnd(node, window.innerWidth - self.options.openedPaneGap, 0, 0, null, true);
+					
+				}
+				else if (ncache._thisdrag === "left") {
+					self._addClass(node, 'draggedleft');
+					self._translateEnd(node, -(window.innerWidth - self.options.openedPaneGap), 0, 0, null, true);
+				}
+
+				if (ncache._shovedir === 'right') {
+					self._removeClass(ncache._backpane, 'shovedleft');
+				}
+				else if (ncache._shovedir === 'left') {
+					self._removeClass(ncache._backpane, 'shovedright');
+				}
+								
+				if (ncache._backpane && ncache._shovedir) {
+					self._removeClass(ncache._backpane, 'notransition');
+					self._resetTranslate(ncache._backpane, true);
+					self._translateEnd(ncache._backpane, 0, 0, 0, null, true);
+				}
+				
+				// turn off controls; note that we aren't excluding ourselves (node) here. That's because
+				// we're disabling our own controls, too.
+				self._toggleControlsOffExcept(ncache._backpane);
+			}
+			// the drag did not go far enough to open the pane.
+			else
+			{
+				self._resetTranslate(node, true);
+				if (ncache._backpane && ncache._shovedir) {
+					self._removeClass(ncache._backpane, 'notransition');
+					self._resetTranslate(ncache._backpane, true);
+				}
+				
+				setTimeout(function() {
+					self._toggleControlsOn();						
+				}, 200);
+			}
+			
+			/* for now, we aren't allowing up or down.
+			if (drag === "up" || drag === "down") {
+				if (Math.abs(e.gesture.deltaY) > swipeDist) {
+					self._addClass(node, 'opened');
+					node._opened = true;
+					self._translateEnd(node, 0, window.innerWidth - self.options.openedPaneGap, 0, null, true);
+				}
+				else
+				{
+					self._resetTranslate(node);
+				}
+			}
+			*/
+		};
+		
+		this._openHiddenPane = function (e, node, ncache) {
+			var pos = node.getAttribute('data-tulito-pos');
+			
+			// They can shove other panes as they move.
+			/* FIXME: the * 1.1 here was meant to smooth out the drag. If you look closely, you can
+		       see that the up/down hidden pane drags are smoother than the left/right drags, and this 
+		       is because it takes a moment for the gesture delta to catch up to the extra distance.
+		       But so far, it's not working as well for left/right. */
+		
+			var shove = node.getAttribute('data-tulito-shove');
+			var shoveel = document.querySelector('[data-tulito-id="' + shove + '"]');
+			ncache._shoveel = shoveel;
+			
+			// FIXME: consolidate this retrieval above of the shove element.
+			if (shove) {
+				if (pos === "left") {
+					self._addClass(ncache._shoveel, 'shovedright');
+					self._translateEnd(ncache._shoveel, self.options.shovedPaneGap * 1.1, 0, 0, null, true);
+				}
+				else if (pos === "right") {
+					self._addClass(ncache._shoveel, 'shovedleft');
+					self._translateEnd(ncache._shoveel, -(self.options.shovedPaneGap * 1.1), 0, 0, null, true);
+				}
+			}
+		
+			// deactivate all controls except this one (if they exist)
+			self._toggleControlsOffExcept(node);
+			
+			// hide all hidden panes
+			var hiddenpanes = document.querySelectorAll('[data-tulito-class="hidden-pane"]');
+			for (var i = 0; i < hiddenpanes.length; ++i) {
+				self._removeClass(hiddenpanes[i], 'shown');
+			}
+			
+			// show this one
+			self._addClass(node, 'shown');
+			
+			if (pos === "left") {
+				self._translateEnd(node, -(self.options.openedHiddenPaneGap), 0, 0, null, true);
+			}
+			else if (pos === "right") {
+				self._translateEnd(node, self.options.openedHiddenPaneGap, 0, 0, null, true);
+			}
+			else if (pos === "up") {
+				self._translateEnd(node, 0, self.options.openedHiddenPaneGap, 0, null, true);
+			}
+			else if (pos === "down") {
+				self._translateEnd(node, 0, -(self.options.openedHiddenPaneGap), 0, null, true);
+			}
+			
+			if (self.options.onHiddenPaneShown) {
+				self.options.onHiddenPaneShown(node);
+			}
+			setTimeout(function() { self._addClass(node, 'opened'); }, 1);
+		};
+		
+		this._openBackPane = function (e, node, ncache) {
+			var parentid = node.getAttribute('data-tulito-parent');
+			var parent = document.querySelector('[data-tulito-id="' + parentid + '"]');
+			var shovedir = node.getAttribute('data-tulito-shovedir');
+			var pcache = self._getCache(parent);
+						
+			if (pcache._opened) {
+				if (shovedir) {
+					self._removeClass(node, 'notransition');
+					self._resetTranslate(node);
+				}
+				var drag = node.getAttribute('data-tulito-parentdrag');
+				if (drag === "left") {
+					self._removeClass(parent, 'draggedleft');
+					if (shovedir === 'right') {
+						self._addClass(node, 'shovedleft');
+						self._translateEnd(node, -(self.options.shovedPaneGap), 0, 0, null, true);
+					}
+					else if (shovedir === 'left') {
+						self._addClass(node, 'shovedright');
+						self._translateEnd(node, self.options.shovedPaneGap, 0, 0, null, true);
+					}
+				}
+				else if (drag === "right") {
+					self._removeClass(parent, 'draggedright');
+					if (shovedir === 'right') {
+						self._addClass(node, 'shovedleft');
+						self._translateEnd(node, -(self.options.shovedPaneGap), 0, 0, null, true);
+					}
+					else if (shovedir === 'left') {
+						self._addClass(node, 'shovedright');
+						self._translateEnd(node, self.options.shovedPaneGap, 0, 0, null, true);
+					}					
+				}
+				
+				self._removeClass(parent, 'opened');
+				pcache._opened = false;
+				self._resetTranslate(parent);
+				
+				if (self.options.onBackPaneHidden) {
+					self.options.onBackPaneHidden(node);
+				}
+				
+				setTimeout(function() {
+					self._toggleControlsOn();						
+				}, 200);
+
+			}
+			
+			else
+			{
+				// Show the backpane, then move the parent out of its way.
+				pcache._backpane = node;
+				pcache._shovedir = shovedir;
+				// node._thisdrag = e.gesture.direction;
+				
+				self._toggleControlsOffExcept(node);
+				
+				// hide all backpanes
+				var backpanes = document.querySelectorAll('[data-tulito-class="back-pane"]');
+				for (var i = 0; i < backpanes.length; ++i) {
+					self._removeClass(backpanes[i], 'shown');
+				}
+				
+				self._addClass(node, 'shown');
+				self._addClass(parent, 'opened');
+				pcache._opened = true;
+				
+				self._resetTranslate(parent, true);
+				
+				if (shovedir) {
+					self._removeClass(node, 'notransition');
+					self._resetTranslate(node, true);						
+				}
+				
+				if (self.options.onBackPaneShown) {
+					self.options.onBackPaneShown(node);
+				}
+				
+				
+				// We also need to set some stuff up in case you want to drag it back, 
+				// and this depends on the drag/position.
+				var pos = node.getAttribute('data-tulito-parentdrag');
+				if (pos === 'right') {
+					pcache._thisdrag = 'right';
+					self._addClass(parent, 'draggedright');
+					self._translateEnd(parent, window.innerWidth - self.options.openedPaneGap, 0, 0, null, true);
+					if (shovedir === 'left') {
+						self._removeClass(node, 'shovedright');
+						self._translateEnd(node, 0, 0, 0, null, true);
+					}
+					else if (shovedir === 'right') {
+						self._removeClass(node, 'shovedleft');
+						self._translateEnd(node, 0, 0, 0, null, true);
+					}
+				}
+				
+				// FIXME
+				else if (pos === 'left') {
+					pcache._thisdrag = 'left';
+					self._addClass(parent, 'draggedleft');	
+					self._translateEnd(parent, -(self.options.openedPaneGap), 0, 0, null, true);						
+					if (shovedir === 'left') {
+						self._removeClass(node, 'shovedright');
+						self._translateEnd(node, 0, 0, 0, null, true);
+					}
+					else if (shovedir === 'right') {
+						self._removeClass(node, 'shovedleft');
+						self._translateEnd(node, 0, 0, 0, null, true);
+					}
+				}
 			}
 		};
 		

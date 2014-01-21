@@ -74,7 +74,7 @@ Buttons are simple, but tulito adds to them touch behaviors and touch delays, an
 
 ### Shoving
 
-"Shoving" lets you relate the dragging or opening of a content pane to another pane in order to move them together. This usually takes the form of a slight offset of a back pane when the main pane is moved to give the impression of a shove. Shoving is enabled via the attribute `data-tulito-shove`, but this design is changing between now and "release".
+"Shoving" lets you relate the dragging or opening of a content pane to another pane in order to move them together. This usually takes the form of a slight offset of a back pane when the main pane is moved to give the impression of a shove. Shoving is enabled via the attribute `data-tulito-shove` and `data-tulito-shovedir`, but this design is changing between now and "release".
 
 ### API
 
@@ -100,8 +100,6 @@ I'll separate these into issues at some point in the next few weeks.
 - Clean up the `[data-tulito-class]` selectors in tulito.less.
 - Move more default styling from tulito.less to index.css. 
 - Troubleshoot iScroll errors when using the `snap` option.
-- Remove the caching of some data without the DOM objects. (I know.)
-- Serious refactoring needed of the `drag`, `dragend`, and other handlers. Some 50% of these handlers are duplicate logic that can be consolidated into their own functions.
 - Investigate cause of the pause on the `dragend` shove with hidden panes.
 - Enable swipe anywhere (over other events) to open/close panes.
 - Multiple optimizations possible, including caching of related elements.
