@@ -1,7 +1,7 @@
-/*! tulito.js - 2013-11-18
+/*! tulito.js
  * http://tulito.org
  *
- * Copyright (c) 2013 Danny Brian <danny@brians.org>;
+ * Copyright (c) 2013-2014 Danny Brian <danny@brians.org>;
  * Licensed under the MIT license */
 
 (function(window, undefined) {
@@ -248,8 +248,10 @@
 					if (ncache._shoveel) {
 						self._removeClass(ncache._shoveel, 'notransition');
 					}
+					
 					if (pos === "left" || pos === "right") {
 						if (Math.abs(e.gesture.deltaX) > swipeDist) {
+							ncache._opened = !ncache._opened;
 							self._removeClass(node, 'opened');
 							self._resetTranslate(node);
 							
@@ -328,7 +330,7 @@
 			// For now, I'm going to determine these panes at runtime.
 			if (node.hasAttribute('data-tulito-open')) {
 				node.getAttribute('data-tulito-open').split(/\s+/).forEach(function(key) {
-					self._openPane(document.querySelector('[data-tulito-id="' + key + '"]'), e);
+					self._togglePane(document.querySelector('[data-tulito-id="' + key + '"]'), e);
 				});
 			}
 		};
@@ -341,7 +343,7 @@
 		};
 
 		// This is the real-time pane open event.
-		this._openPane = function (node, e) {
+		this._togglePane = function (node, e) {
 			if (!node) { return; }
 			
 			var ncache = self._getCache(node);
@@ -350,14 +352,14 @@
 			var tclass = node.getAttribute('data-tulito-class');
 			if (tclass === 'hidden-pane')
 			{
-				self._openHiddenPane(e, node, ncache);
+				self._toggleHiddenPane(e, node, ncache);
 			}
 			
 			// But if it's a back pane, we need instead to manipulate the parent 
 			// that it references. We also try to make the toggle close behavior work.
 			else if (tclass === 'back-pane')
 			{	
-				self._openBackPane(e, node, ncache);
+				self._toggleBackPane(e, node, ncache);
 			}
 			
 			// mainscreen._translate(window.innerWidth / 5, 0, 0, 0);
@@ -793,7 +795,7 @@
 			*/
 		};
 		
-		this._openHiddenPane = function (e, node, ncache) {
+		this._toggleHiddenPane = function (e, node, ncache) {
 			var pos = node.getAttribute('data-tulito-pos');
 			
 			// They can shove other panes as they move.
@@ -806,50 +808,77 @@
 			var shoveel = document.querySelector('[data-tulito-id="' + shove + '"]');
 			ncache._shoveel = shoveel;
 			
-			// FIXME: consolidate this retrieval above of the shove element.
-			if (shove) {
+			if (ncache._opened) {
+				ncache._opened = false;
+				if (shove) {
+					if (pos === "left") {
+						self._removeClass(ncache._shoveel, 'shovedright');
+						self._resetTranslate(ncache._shoveel, true);
+						// self._translateEnd(ncache._shoveel, self.options.shovedPaneGap * 1.1, 0, 0, null, true);
+					}
+					else if (pos === "right") {
+						self._removeClass(ncache._shoveel, 'shovedleft');
+						self._resetTranslate(ncache._shoveel, true);
+						// self._translateEnd(ncache._shoveel, -(self.options.shovedPaneGap * 1.1), 0, 0, null, true);
+					}
+				}
+		
+				setTimeout(function() { self._toggleControlsOn() }, 200);
+			
+				ncache._opened = false;
+				
+				if (self.options.onHiddenPaneHidden) {
+					self.options.onHiddenPaneHidden(node);
+				}
+				setTimeout(function() { self._removeClass(node, 'opened'); }, 1);
+			}
+			else
+			{
+				if (shove) {
+					if (pos === "left") {
+						self._addClass(ncache._shoveel, 'shovedright');
+						self._translateEnd(ncache._shoveel, self.options.shovedPaneGap * 1.1, 0, 0, null, true);
+					}
+					else if (pos === "right") {
+						self._addClass(ncache._shoveel, 'shovedleft');
+						self._translateEnd(ncache._shoveel, -(self.options.shovedPaneGap * 1.1), 0, 0, null, true);
+					}
+				}
+		
+				// deactivate all controls except this one (if they exist)
+				self._toggleControlsOffExcept(node);
+			
+				// hide all hidden panes
+				var hiddenpanes = document.querySelectorAll('[data-tulito-class="hidden-pane"]');
+				for (var i = 0; i < hiddenpanes.length; ++i) {
+					self._removeClass(hiddenpanes[i], 'shown');
+				}
+			
+				// show this one
+				self._addClass(node, 'shown');
+				ncache._opened = true;
+				
 				if (pos === "left") {
-					self._addClass(ncache._shoveel, 'shovedright');
-					self._translateEnd(ncache._shoveel, self.options.shovedPaneGap * 1.1, 0, 0, null, true);
+					self._translateEnd(node, -(self.options.openedHiddenPaneGap), 0, 0, null, true);
 				}
 				else if (pos === "right") {
-					self._addClass(ncache._shoveel, 'shovedleft');
-					self._translateEnd(ncache._shoveel, -(self.options.shovedPaneGap * 1.1), 0, 0, null, true);
+					self._translateEnd(node, self.options.openedHiddenPaneGap, 0, 0, null, true);
 				}
-			}
-		
-			// deactivate all controls except this one (if they exist)
-			self._toggleControlsOffExcept(node);
+				else if (pos === "up") {
+					self._translateEnd(node, 0, self.options.openedHiddenPaneGap, 0, null, true);
+				}
+				else if (pos === "down") {
+					self._translateEnd(node, 0, -(self.options.openedHiddenPaneGap), 0, null, true);
+				}
 			
-			// hide all hidden panes
-			var hiddenpanes = document.querySelectorAll('[data-tulito-class="hidden-pane"]');
-			for (var i = 0; i < hiddenpanes.length; ++i) {
-				self._removeClass(hiddenpanes[i], 'shown');
+				if (self.options.onHiddenPaneShown) {
+					self.options.onHiddenPaneShown(node);
+				}
+				setTimeout(function() { self._addClass(node, 'opened'); }, 1);
 			}
-			
-			// show this one
-			self._addClass(node, 'shown');
-			
-			if (pos === "left") {
-				self._translateEnd(node, -(self.options.openedHiddenPaneGap), 0, 0, null, true);
-			}
-			else if (pos === "right") {
-				self._translateEnd(node, self.options.openedHiddenPaneGap, 0, 0, null, true);
-			}
-			else if (pos === "up") {
-				self._translateEnd(node, 0, self.options.openedHiddenPaneGap, 0, null, true);
-			}
-			else if (pos === "down") {
-				self._translateEnd(node, 0, -(self.options.openedHiddenPaneGap), 0, null, true);
-			}
-			
-			if (self.options.onHiddenPaneShown) {
-				self.options.onHiddenPaneShown(node);
-			}
-			setTimeout(function() { self._addClass(node, 'opened'); }, 1);
 		};
 		
-		this._openBackPane = function (e, node, ncache) {
+		this._toggleBackPane = function (e, node, ncache) {
 			var parentid = node.getAttribute('data-tulito-parent');
 			var parent = document.querySelector('[data-tulito-id="' + parentid + '"]');
 			var shovedir = node.getAttribute('data-tulito-shovedir');

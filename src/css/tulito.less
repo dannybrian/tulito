@@ -1,7 +1,7 @@
-/*! tulito.less - 2013-11-18
+/*! tulito.less
  * http://tulito.org
  *
- * Copyright (c) 2013 Danny Brian <danny@brians.org>;
+ * Copyright (c) 2013-2014 Danny Brian <danny@brians.org>;
  * Licensed under the Apache 2 license */
 
 /* 
@@ -259,7 +259,7 @@ li[data-tulito-class="button"]
 {
 	background-color: #333;
 	
-	.tarrow {
+	.tarrow, .tclose {
 		position: absolute;
 		pointer-events: none;
 		i {
@@ -346,6 +346,14 @@ li[data-tulito-class="button"]
 		.tarrow {
 			top: 5px;
 			left: 47%;
+		}
+		
+		.tclose {
+			top: 5px;
+			right: 10px;
+			color: rgba(10,10,10,0.3);
+			font-size: 20px;
+			pointer-events: auto;
 		}
 	}
 }
