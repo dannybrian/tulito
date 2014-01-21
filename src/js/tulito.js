@@ -949,8 +949,9 @@
 				// FIXME
 				else if (pos === 'left') {
 					pcache._thisdrag = 'left';
-					self._addClass(parent, 'draggedleft');	
-					self._translateEnd(parent, -(self.options.openedPaneGap), 0, 0, null, true);						
+					self._addClass(parent, 'draggedleft');
+						
+					self._translateEnd(parent, -(window.innerWidth - self.options.openedPaneGap), 0, 0, null, true);						
 					if (shovedir === 'left') {
 						self._removeClass(node, 'shovedright');
 						self._translateEnd(node, 0, 0, 0, null, true);
