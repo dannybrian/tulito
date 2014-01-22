@@ -195,7 +195,7 @@
 			// of their position. They are much simpler than panes, since they only get
 			// dragged (functionally) in one direction.
 			var pos = node.getAttribute('data-tulito-pos');
-
+			
 			var shove = node.getAttribute('data-tulito-shove');
 			if (shove) {
 				var shoveel = document.querySelector('[data-tulito-id="' + shove + '"]');
@@ -203,6 +203,17 @@
 				var scache = self._getCache(shoveel);
 			}
 			
+			var panegap;
+			var tpanegap = panegap = node.getAttribute('data-tulito-panegap');
+			
+			if (panegap === null) {
+				panegap = self.options.openedHiddenPaneGap;
+			}
+			else if (panegap === 'full') {
+				panegap = 0;
+			}
+			ncache._panegap = tpanegap;
+						
 			// Disable transitions when a drag begins.
 			Hammer(node).on("dragstart", function(e) {
 				self._addClass(node, 'notransition'); 
@@ -216,25 +227,25 @@
 			Hammer(node).on("drag", function(e) {
 				if (e.gesture.direction === pos) {
 					if (pos === "right") {
-						self._translate(node, e.gesture.deltaX, 0, 0, { xMax: window.innerWidth, xMin: self.options.openedHiddenPaneGap });													
+						self._translate(node, e.gesture.deltaX, 0, 0, { xMax: window.innerWidth, xMin: panegap });													
 						if (ncache._shoveel) {
 							self._translate(ncache._shoveel, e.gesture.deltaX * self.options.shovedHiddenRatio, 0, 0);
 						}
 					}
 					else if (pos === "left")
 					{
-						self._translate(node, e.gesture.deltaX, 0, 0, { xMax: -(self.options.openedHiddenPaneGap), xMin: -(window.innerWidth) });							
+						self._translate(node, e.gesture.deltaX, 0, 0, { xMax: -(panegap), xMin: -(window.innerWidth) });							
 						if (ncache._shoveel) {
 							self._translate(ncache._shoveel, e.gesture.deltaX * self.options.shovedHiddenRatio, 0, 0, { xMax: self.options.shovedPaneGap, xMin: 0 });
 						}
 					}
 					else if (pos === "up")
 					{
-						self._translate(node, 0, e.gesture.deltaY, 0, { yMax: -(self.options.openedHiddenPaneGap), yMin: -(window.innerHeight) } );
+						self._translate(node, 0, e.gesture.deltaY, 0, { yMax: -(panegap), yMin: -(window.innerHeight) } );
 					}
 					else if (pos === "down")
 					{
-						self._translate(node, 0, e.gesture.deltaY, 0, { yMax: window.innerHeight, yMin: self.options.openedHiddenPaneGap } );						
+						self._translate(node, 0, e.gesture.deltaY, 0, { yMax: window.innerHeight, yMin: panegap } );						
 					}
 				}
 			});
@@ -286,6 +297,7 @@
 					}
 					if (pos === "up" || pos === "down") {
 						if (Math.abs(e.gesture.deltaY) > swipeDist) {
+							ncache._opened = !ncache._opened;
 							self._removeClass(node, 'opened');
 							self._resetTranslate(node);
 							
@@ -314,7 +326,13 @@
 		};
 		
 		this._inits['back-pane'] = function (node) {
-			// nothing to do here.
+			// if it shoves panes fully, we treat it as its own pane.
+			var ncache = self._getCache(node);
+			/*
+			if (node.getAttribute('data-tulito-shovedist') === 'full') {
+				self._inits['pane'](node);
+			}
+			*/
 		};
 		
 		// Highlight on touch so that :active doesn't cause a flicker.
@@ -361,7 +379,7 @@
 			{	
 				self._toggleBackPane(e, node, ncache);
 			}
-			
+						
 			// mainscreen._translate(window.innerWidth / 5, 0, 0, 0);
 		};
 		
@@ -533,6 +551,20 @@
 			}
 		}
 		
+		this._hideAllBackpanes = function () {
+			var backpanes = document.querySelectorAll('[data-tulito-class="back-pane"]');
+			for (var i = 0; i < backpanes.length; ++i) {
+				self._removeClass(backpanes[i], 'shown');
+			}
+		}
+		
+		this._hideAllHiddenPanes = function () {
+			var hiddenpanes = document.querySelectorAll('[data-tulito-class="hidden-pane"]');
+			for (var i = 0; i < hiddenpanes.length; ++i) {
+				self._removeClass(hiddenpanes[i], 'shown');
+			}
+		}
+		
 		this._getCache = function (node) {
 			var nodeid = node.getAttribute('id');
 			if (!nodeid) {
@@ -571,18 +603,25 @@
 			var backpanes = self._getBackpanes(node);
 			for (var i = 0; i < backpanes.length; ++i) {
 				var bcache = self._getCache(backpanes[i]);
+				var shovedist = backpanes[i].getAttribute('data-tulito-shovedist');
+				if (shovedist === undefined) {
+					shovedist = self.options.shovedPaneGap;
+				}
+				if (shovedist === "full") {
+					shovedist = window.innerWidth;
+				}
 				var shovedir = backpanes[i].getAttribute('data-tulito-shovedir');
 				if (shovedir === "right") {
 					self._addClass(backpanes[i], 'shovedleft');
-					self._translateEnd(backpanes[i], -(self.options.shovedPaneGap), 0, 0 );
+					self._translateEnd(backpanes[i], -(shovedist), 0, 0 );
 				}
 				else if (shovedir === "left") {
 					self._addClass(backpanes[i], 'shovedright');
-					self._translateEnd(backpanes[i], self.options.shovedPaneGap, 0, 0 );
+					self._translateEnd(backpanes[i], shovedist, 0, 0 );
 				}
 			}
 		};
-		
+				
 		this._startClosedPaneDrag = function (e, node, ncache) {
 			self._addClass(node, 'notransition'); 
 			
@@ -805,8 +844,18 @@
 		       But so far, it's not working as well for left/right. */
 		
 			var shove = node.getAttribute('data-tulito-shove');
+			var panegap;
+			var tpanegap = panegap = node.getAttribute('data-tulito-panegap');
 			var shoveel = document.querySelector('[data-tulito-id="' + shove + '"]');
 			ncache._shoveel = shoveel;
+			ncache._panegap = panegap;
+			
+			if (panegap === null) {
+				panegap = self.options.openedHiddenPaneGap;
+			}
+			else if (panegap === 'full') {
+				panegap = 0;
+			}
 			
 			if (ncache._opened) {
 				ncache._opened = false;
@@ -830,17 +879,20 @@
 				if (self.options.onHiddenPaneHidden) {
 					self.options.onHiddenPaneHidden(node);
 				}
-				setTimeout(function() { self._removeClass(node, 'opened'); }, 1);
+				setTimeout(function() {
+					self._removeClass(node, 'opened');
+					if (tpanegap === 'full') { self._removeClass(node, 'full-pane'); }
+				}, 1);
 			}
 			else
 			{
 				if (shove) {
 					if (pos === "left") {
-						self._addClass(ncache._shoveel, 'shovedright');
+						setTimeout(function() { self._addClass(ncache._shoveel, 'shovedright') }, 50);
 						self._translateEnd(ncache._shoveel, self.options.shovedPaneGap * 1.1, 0, 0, null, true);
 					}
 					else if (pos === "right") {
-						self._addClass(ncache._shoveel, 'shovedleft');
+						setTimeout(function() { self._addClass(ncache._shoveel, 'shovedleft') }, 50);
 						self._translateEnd(ncache._shoveel, -(self.options.shovedPaneGap * 1.1), 0, 0, null, true);
 					}
 				}
@@ -849,26 +901,24 @@
 				self._toggleControlsOffExcept(node);
 			
 				// hide all hidden panes
-				var hiddenpanes = document.querySelectorAll('[data-tulito-class="hidden-pane"]');
-				for (var i = 0; i < hiddenpanes.length; ++i) {
-					self._removeClass(hiddenpanes[i], 'shown');
-				}
+				self._hideAllHiddenPanes();
 			
 				// show this one
 				self._addClass(node, 'shown');
+				if (tpanegap === 'full') { self._addClass(node, 'full-pane'); }
 				ncache._opened = true;
 				
 				if (pos === "left") {
-					self._translateEnd(node, -(self.options.openedHiddenPaneGap), 0, 0, null, true);
+					self._translateEnd(node, -(panegap), 0, 0, null, true);
 				}
 				else if (pos === "right") {
-					self._translateEnd(node, self.options.openedHiddenPaneGap, 0, 0, null, true);
+					self._translateEnd(node, panegap, 0, 0, null, true);
 				}
 				else if (pos === "up") {
-					self._translateEnd(node, 0, self.options.openedHiddenPaneGap, 0, null, true);
+					self._translateEnd(node, 0, panegap, 0, null, true);
 				}
 				else if (pos === "down") {
-					self._translateEnd(node, 0, -(self.options.openedHiddenPaneGap), 0, null, true);
+					self._translateEnd(node, 0, -(panegap), 0, null, true);
 				}
 			
 				if (self.options.onHiddenPaneShown) {
@@ -882,8 +932,18 @@
 			var parentid = node.getAttribute('data-tulito-parent');
 			var parent = document.querySelector('[data-tulito-id="' + parentid + '"]');
 			var shovedir = node.getAttribute('data-tulito-shovedir');
+			var shovedist;
+			var tshovedist = shovedist = node.getAttribute('data-tulito-shovedist');
 			var pcache = self._getCache(parent);
-						
+			ncache._shovedist = shovedist;
+			
+			if (shovedist === null) {
+				shovedist = self.options.shovedPaneGap;
+			}
+			else if (shovedist === "full") {
+				shovedist = window.innerWidth;				
+			}
+			
 			if (pcache._opened) {
 				if (shovedir) {
 					self._removeClass(node, 'notransition');
@@ -894,26 +954,29 @@
 					self._removeClass(parent, 'draggedleft');
 					if (shovedir === 'right') {
 						self._addClass(node, 'shovedleft');
-						self._translateEnd(node, -(self.options.shovedPaneGap), 0, 0, null, true);
+						self._translateEnd(node, -(shovedist), 0, 0, null, true);
 					}
 					else if (shovedir === 'left') {
 						self._addClass(node, 'shovedright');
-						self._translateEnd(node, self.options.shovedPaneGap, 0, 0, null, true);
+						self._translateEnd(node, shovedist, 0, 0, null, true);
 					}
 				}
 				else if (drag === "right") {
 					self._removeClass(parent, 'draggedright');
 					if (shovedir === 'right') {
 						self._addClass(node, 'shovedleft');
-						self._translateEnd(node, -(self.options.shovedPaneGap), 0, 0, null, true);
+						self._translateEnd(node, -(shovedist), 0, 0, null, true);
 					}
 					else if (shovedir === 'left') {
 						self._addClass(node, 'shovedright');
-						self._translateEnd(node, self.options.shovedPaneGap, 0, 0, null, true);
+						self._translateEnd(node, shovedist, 0, 0, null, true);
 					}					
 				}
 				
 				self._removeClass(parent, 'opened');
+				if (tshovedist === 'full') {
+					self._removeClass(parent, 'full-pane');
+				}
 				pcache._opened = false;
 				self._resetTranslate(parent);
 				
@@ -926,23 +989,22 @@
 				}, 200);
 
 			}
-			
 			else
 			{
 				// Show the backpane, then move the parent out of its way.
 				pcache._backpane = node;
 				pcache._shovedir = shovedir;
 				// node._thisdrag = e.gesture.direction;
-				
+
 				self._toggleControlsOffExcept(node);
 				
 				// hide all backpanes
-				var backpanes = document.querySelectorAll('[data-tulito-class="back-pane"]');
-				for (var i = 0; i < backpanes.length; ++i) {
-					self._removeClass(backpanes[i], 'shown');
-				}
+				self._hideAllBackpanes();
 				
 				self._addClass(node, 'shown');
+				if (tshovedist === 'full') {
+					self._addClass(parent, 'full-pane');
+				}
 				self._addClass(parent, 'opened');
 				pcache._opened = true;
 				
@@ -956,7 +1018,6 @@
 				if (self.options.onBackPaneShown) {
 					self.options.onBackPaneShown(node);
 				}
-				
 				
 				// We also need to set some stuff up in case you want to drag it back, 
 				// and this depends on the drag/position.

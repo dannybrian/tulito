@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	var optionsMenu = new IScroll( document.querySelector('[data-tulito-id="back-pane-left"]'), { eventPassthrough: false, scrollX: false, scrollY: true, snap: false } );
 	app.hScroller1 = new IScroll('#hscroller1', { eventPassthrough: true, scrollX: true, scrollY: false, snap: false, probeType: 3 });
 	app.hScroller2 = new IScroll('#hscroller2', { eventPassthrough: true, scrollX: true, scrollY: false, snap: false, probeType: 3 });
+	app.hScroller3 = new IScroll('#hscroller3', { eventPassthrough: true, scrollX: true, scrollY: false, snap: true, snapStepX: window.innerWidth - 74 });
 	
 	
 	var liNum1 = 3;
@@ -54,10 +55,14 @@ document.addEventListener('DOMContentLoaded', function() {
 				optionsMenu.refresh();
 				app.hScroller1.refresh();
 				app.hScroller2.refresh();
+				app.hScroller3.refresh();
 			},
 			onBackPaneShown: function (node) {
 				// refresh iscroll elements
 				optionsMenu.refresh();
+			},
+			onHiddenPaneShown: function (node) {
+				app.hScroller3.refresh();
 			}
 		}
 	);

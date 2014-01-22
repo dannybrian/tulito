@@ -226,6 +226,9 @@ li[data-tulito-class="button"]
 	{		
 		&.opened {
 			.translate((@screenWidth - @openedPaneGap), 0px, 0px);
+			&.full-pane {
+				.translate(@screenWidth, 0px, 0px);
+			}
 		}
 		
 		.tarrow {
@@ -238,6 +241,9 @@ li[data-tulito-class="button"]
 	{		
 		&.opened {
 			.translate(-(@screenWidth - @openedPaneGap), 0px, 0px);
+			&.full-pane {
+				.translate(-(@screenWidth), 0px, 0px);
+			}
 		}
 		
 		.tarrow {
@@ -247,9 +253,15 @@ li[data-tulito-class="button"]
 	}
 	&.shovedright {
 		.translate(@shovedPaneGap, 0px, 0px);
+		&.full-pane {
+			.translate(@screenWidth, 0px, 0px);
+		}
 	}
 	&.shovedleft {
 		.translate(-(@shovedPaneGap), 0px, 0px);
+		&.full-pane {
+			.translate(-(@screenWidth), 0px, 0px);
+		}
 	}
 }
 
@@ -279,6 +291,9 @@ li[data-tulito-class="button"]
 			&.opened {
 				.box-shadow(0px, 0px, @paneShadow);
 				.translate((-@openedHiddenPaneGap), 0px, 0px);
+				&.full-pane {
+					.translate(0, 0, 0);
+				}
 			}
 		}
 		
@@ -299,6 +314,9 @@ li[data-tulito-class="button"]
 			&.opened {
 				.box-shadow(0px, 0px, @paneShadow);
 				.translate(@openedHiddenPaneGap, 0px, 0px);
+				&.full-pane {
+					.translate(0, 0, 0);
+				}
 			}
 		}
 		
@@ -320,6 +338,9 @@ li[data-tulito-class="button"]
 			&.opened {
 				.box-shadow(0px, 0px, @paneShadow);
 				.translate(0px, (-@openedHiddenPaneGap), 0px);
+				&.full-pane {
+					.translate(0, 0, 0);
+				}
 			}
 		}
 		
@@ -340,6 +361,9 @@ li[data-tulito-class="button"]
 			&.opened {
 				.box-shadow(0px, 0px, @paneShadow);
 				.translate(0px, @openedHiddenPaneGap, 0px);
+				&.full-pane {
+					.translate(0, 0, 0);
+				}
 			}
 		}
 		
@@ -349,8 +373,8 @@ li[data-tulito-class="button"]
 		}
 		
 		.tclose {
-			top: 5px;
-			right: 10px;
+			top: 0px;
+			right: 5px;
 			color: rgba(10,10,10,0.3);
 			font-size: 20px;
 			pointer-events: auto;
@@ -384,61 +408,30 @@ li[data-tulito-class="button"]
 	&.shovedleft {
 		.translate(-(@shovedPaneGap), 0px, 0px);
 	}
+}
+
+[data-tulito-shovedist="full"]
+{
+	display: none;
+	.translate (0px, 0px, 0px);
+	background-color: #222;
+	z-index: -1;
 	
-	/* Some defaults for tulito ULs */
-	ul {
-		list-style: none;
-		padding:0;
-		margin:0;
-		width:100%;
-	}
-	li {
-		padding: 0 10px;
-		height: 38px;
-		line-height:40px;
-		border-bottom: 1px solid #222;
-		background-color: #3a3a3a;
-		font-size: 1.3rem;
-		color: #bbb;
-		font-weight: 600;
-		&.active {
-			background-color: #444444;
-		}
-		&:active {
-			background-color: #444444;
-		}
-	}
-	ul > ul > li {
-		font-weight: 400;
-		font-size: 1.3rem;
-		background-color: #2c2c2c;
+	.transition (all, @swipeSpeed);
+	&.shown {
+		display: inline-block;
 	}
 	
-	ul.right {
-		text-align:right;
-	}
-	ul.right > ul > li {
-		background-color: #fafafa;
-	}
-	ul.right li {
-		background-color: #ededed;
-		border-bottom: 1px solid #ededed;
-		font-size: 1.3rem;
-		color: #444;
-		&.active {
-			background-color: #999;
-		}
-		&:active {
-			background-color: #999;
-		}
-	}
-	ul.right > li {
-		color: #888;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 2px;
+	&.notransition {
+		.notransition();
 	}
 	
+	&.shovedright {
+		.translate(@screenWidth, 0px, 0px);
+	}
+	&.shovedleft {
+		.translate(-(@screenWidth), 0px, 0px);
+	}
 }
 
 
