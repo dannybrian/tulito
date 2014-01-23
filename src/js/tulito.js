@@ -30,6 +30,8 @@
 			onBackPaneHidden: null
 		};
 		
+		/* PUBLIC API */
+		
 		this.init = function (options) {
 
 			this.options = {};
@@ -92,6 +94,25 @@
 			}
 		};
 		
+		this.on = function (options) {
+			// component, event, handler
+		};
+		
+		this.toggleOpen = function (options) {
+			
+		};
+		
+		this.toggleEnable = function (options) {
+			
+		};		
+
+		this.state = function (options) {
+			
+		};
+		
+		
+		/* INTERNAL API */
+		
 		// Experimental, but I don't see a reason to include this. Just use iScroll and register
 		// your scrollables.
 		this._inits['scrollable'] = function (node) {
@@ -118,17 +139,29 @@
 		
 		this._inits['pane'] = function (node) {
 
-			// The directions this pane can be dragged depends on whether there are backpanes
-			// that reference it.
-						
 			// Initiatize some reference caching for this node.
 			var ncache = self._getCache(node);
+			
+			// Panes move to expose back panes. So 
+			node.addEventListener('transitionend', function(e) {
+				if (e.propertyName.match(/-transform$/)) {
+					if (ncache._backpane) {
+						if (!self._hasClass(node, 'opened')) {
+							self._removeClass(ncache._backpane, 'shown');
+						}
+						
+					}
+				}
+			}, false);
+			
+			// Note: The directions this pane can be dragged depends on whether there are backpanes
+			// that reference it, rather than any attributes it has itself.
 			
 			/* Shoving works differently for panes. A backpane with data-tulito-shovedir gets shoved
 			   immediately at load time, and the shove classes get removed when the parent pane is dragged. We 
 			   we need to set these classes here. */
 			self._shoveBackpanes(node);
-		
+
 			var dragging = node.getAttribute('data-tulito-drag');
 			if (dragging === 'none') { return; }
 			
@@ -193,6 +226,16 @@
 		this._inits['hidden-pane'] = function (node) {
 			
 			var ncache = self._getCache(node);
+			
+			// Hidden panes get hidden (as in, CSS display: none) after a close transition.
+			// This keeps things moving smoothly.
+			node.addEventListener('transitionend', function(e) {
+				if (e.propertyName.match(/-transform$/)) {
+					if (!self._hasClass(e.srcElement, 'opened')) {
+						self._removeClass(e.srcElement, 'shown');
+					}
+				}
+			}, false);
 			
 			var dragging = node.getAttribute('data-tulito-drag');
 			if (dragging === 'none') { return; }
@@ -332,13 +375,7 @@
 		};
 		
 		this._inits['back-pane'] = function (node) {
-			// if it shoves panes fully, we treat it as its own pane.
-			var ncache = self._getCache(node);
-			/*
-			if (node.getAttribute('data-tulito-shovedist') === 'full') {
-				self._inits['pane'](node);
-			}
-			*/
+
 		};
 		
 		// Highlight on touch so that :active doesn't cause a flicker.
@@ -350,6 +387,7 @@
 		// This is the real-time button tap event.
 		this._buttonTap = function (node, e) {
 			if (!node) { return; }
+			
 			// this._addClass(node, 'active');
 			// For now, I'm going to determine these panes at runtime.
 			if (node.hasAttribute('data-tulito-open')) {
@@ -741,7 +779,7 @@
 				setTimeout(function() {
 					self._removeClass(node, 'draggedleft');
 					self._removeClass(node, 'draggedright');									
-				}, 300);
+				}, 200);
 				
 				// turn on controls
 				setTimeout(function() {
@@ -909,9 +947,6 @@
 				// deactivate all controls except this one (if they exist)
 				self._toggleControlsOffExcept(node);
 			
-				// hide all hidden panes
-				self._hideAllHiddenPanes();
-			
 				// show this one
 				self._addClass(node, 'shown');
 				if (tpanegap === 'full') { self._addClass(node, 'full-pane'); }
@@ -999,17 +1034,14 @@
 
 			}
 			else
-			{
+			{			
 				// Show the backpane, then move the parent out of its way.
 				pcache._backpane = node;
 				pcache._shovedir = shovedir;
 				// node._thisdrag = e.gesture.direction;
 
 				self._toggleControlsOffExcept(node);
-				
-				// hide all backpanes
-				self._hideAllBackpanes();
-				
+
 				self._addClass(node, 'shown');
 				if (tshovedist === 'full') {
 					self._addClass(parent, 'full-pane');
@@ -1060,7 +1092,7 @@
 						self._translateEnd(node, 0, 0, 0, null, true);
 					}
 				}
-			}
+			}			
 		};
 		
 		return this;
