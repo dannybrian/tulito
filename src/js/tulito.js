@@ -129,6 +129,9 @@
 			   we need to set these classes here. */
 			self._shoveBackpanes(node);
 		
+			var dragging = node.getAttribute('data-tulito-drag');
+			if (dragging === 'none') { return; }
+			
 			// Disable transitions when a drag begins, and show the proper back pane.
 			Hammer(node).on("dragstart", function(e) {
 				if (e.srcElement !== node) { return; }
@@ -190,6 +193,9 @@
 		this._inits['hidden-pane'] = function (node) {
 			
 			var ncache = self._getCache(node);
+			
+			var dragging = node.getAttribute('data-tulito-drag');
+			if (dragging === 'none') { return; }
 			
 			// Hidden panes can be dragged and swiped, but this happens only to the inverse
 			// of their position. They are much simpler than panes, since they only get
@@ -407,7 +413,7 @@
 		    this._style.OTransitionDuration = 
 		    this._style.transitionDuration = speed + 'ms';
 			// let's leave the transition to CSS if we can
-			*/	
+			*/
 			
 			var ncache = this._getCache(node);
 			
@@ -529,6 +535,9 @@
 				self.options.onOrientationChange();
 			}
 		}
+		
+		/* FIXME: These next four utility functions do potentially expensive DOM manipulation and
+		   need some optimization. */
 		
 		this._toggleControlsOffExcept = function (node) {
 			// deactivate all controls except this one
