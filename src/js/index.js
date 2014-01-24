@@ -4,11 +4,10 @@
    own custom events. */
 
 document.addEventListener('deviceready', function() {
-	StatusBar.overlaysWebView(false);
-	StatusBar.hide();
+	
 	setTimeout(function() {
 		navigator.splashscreen.hide();
-	}, 1000);
+	}, 1);
 }, false);
 
 
@@ -77,16 +76,16 @@ document.addEventListener('DOMContentLoaded', function() {
 			var scrollid = e.srcElement.getAttribute('data-scrollid');
 			var targetel = document.querySelector('#hscroller1 * [data-scrollid="' + scrollid + '"]');
 			// Let the transition happen, then remove the element.
-			//targetel.addEventListener('transitionend', function(e) {
-			//	if (e.propertyName === 'width') {
+			targetel.addEventListener('transitionend', function(e) {
+				if (e.propertyName === 'width') {
 					targetel.parentNode.removeChild(targetel);
 					document.querySelector('#hscroller1').style.width = (64 * document.querySelectorAll('#hscroller1 li').length) + "px";
 					setTimeout(function() {
 						app.scroller1.refresh();
 					}, 100);
-			//	}
-			//}, false);
-			//tulito._addClass(targetel, 'removing');
+				}
+			}, false);
+			tulito._addClass(targetel, 'removing');
 		});
 	}
 	
