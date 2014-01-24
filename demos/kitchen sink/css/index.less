@@ -11,6 +11,8 @@
 @screenWidth: 320px;  /* the width of the screen, changed automatically by tulito */
 @screenHeight: 960px; /* the height of the screen, changed automatically by tulito */
 
+@scrollerButtonSize: 70px;
+
 body {
   background-color: #363535;
   background-attachment: fixed;
@@ -162,9 +164,9 @@ a:visited, a:active, a:hover {
 
 .hscroller-cont {
 	margin-top: 14px;
-	margin-bottom: 14px;
+	margin-bottom: 16px;
 	z-index: 1;
-	height: 60px;
+	height: @scrollerButtonSize;
 	width: 100%;
 	overflow: hidden;
 }
@@ -183,8 +185,8 @@ a:visited, a:active, a:hover {
 .hscroller {
 	position: absolute;
 	z-index: 1;
-	width: 1600px; /* This needs to be accurate to the intended contents, including margins of the li's */
-	height: 70px;
+	width: (@scrollerButtonSize * 1.1 * 23); /* This needs to be accurate to the intended contents, including margins of the li's */
+	height: @scrollerButtonSize;
 	
 	-webkit-transform: translateZ(0);
     -moz-transform: translateZ(0);
@@ -220,10 +222,10 @@ a:visited, a:active, a:hover {
 .hscroller li {
 	transition: width 500ms, margin 200ms, opacity 200ms;
 	display: block;
-	width: 60px;
-	height: 60px;
-	line-height: 60px;
-	margin-left: 4px;
+	width: @scrollerButtonSize;
+	height: @scrollerButtonSize;
+	line-height: @scrollerButtonSize;
+	margin-left: (@scrollerButtonSize * 0.1);
 	float: left;
 	background-color: #444;
 	font-size: 20px;
@@ -444,7 +446,7 @@ a:visited, a:active, a:hover {
 
 @media screen and (max-height: 470px) {
   textarea {
-    max-height: 80px;
+    max-height: 120px;
   }
 }
 

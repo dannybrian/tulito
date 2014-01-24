@@ -4,10 +4,11 @@
    own custom events. */
 
 document.addEventListener('deviceready', function() {
-	
+	StatusBar.overlaysWebView(false);
+	StatusBar.hide();
 	setTimeout(function() {
 		navigator.splashscreen.hide();
-	}, 1);
+	}, 100);
 }, false);
 
 
@@ -18,10 +19,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	// Add scrolling to elements with iScroll
 	var optionsMenu = new IScroll( document.querySelector('[data-tulito-id="back-pane-left"]'), { eventPassthrough: false, scrollX: false, scrollY: true, snap: false } );
 	app.scroller1 = new IScroll('#hscroller1', { eventPassthrough: true, scrollX: true, scrollY: false, probeType: 3, deceleration: 0.001 });
-	app.scroller2 = new IScroll('#hscroller2', { eventPassthrough: true, scrollX: true, scrollY: false, probeType: 3, deceleration: 0.001 });
+	// app.scroller2 = new IScroll('#hscroller2', { eventPassthrough: true, scrollX: true, scrollY: false, probeType: 3, deceleration: 0.001 });
 	app.scroller3 = new IScroll('#hscroller3', { eventPassthrough: true, scrollX: true, scrollY: false, snap: true, snapStepX: window.innerWidth - 31, deceleration: 0.008 });
 	
 	// Make the two small carousels highlight the middle button
+	/*
 	var liNum1 = 3;
 	var scroll1Target = document.querySelector('#hscroller1 li:nth-of-type(' + liNum1 + ')');
 	tulito._addClass(scroll1Target, 'ptarget');
@@ -49,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			tulito._addClass(scroll2Target, 'ptarget');
 		}
 	});
+	*/
 	
 	// The buttons in the scroller do not have data-tulito-open attributes because we 
 	// want to handle this ourselves, opening the bottom pane to the matching content.
@@ -61,8 +64,10 @@ document.addEventListener('DOMContentLoaded', function() {
 			var scrollid = e.srcElement.getAttribute('data-scrollid');
 			var targetel = document.querySelector('#hscroller3 * [data-scrollid="' + scrollid + '"]');
 			tulito.toggleOpen(document.querySelector('[data-tulito-id="bottom-pane"]'), e);
+
 			// this needs a timer from the refresh that happens below.
 			setTimeout(function() { 
+				app.scroller1.scrollToElement(e.srcElement, 200, -130);
 				app.scroller3.scrollToElement(targetel, 0, -25);
 			}, 1);
 		});
@@ -70,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	// For the second scroller, we'll have the buttons remove the corresponding button in the
 	// upper scroller.
+	/*
 	var buttons2 = document.querySelectorAll('#hscroller2 li');
 	for (var i = 0; i < buttons2.length; ++i) {
 		Hammer(buttons2[i]).on("tap", function(e) {
@@ -88,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			tulito._addClass(targetel, 'removing');
 		});
 	}
+	*/
 	
 	Hammer(document.querySelector('#thanks-button')).on("tap", function(e) {
 		var loader = document.querySelector('.loader');
@@ -108,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				// refresh iscroll elements (FIXME: a better way to pass the element that needs a refresh)
 				optionsMenu.refresh();
 				app.scroller1.refresh();
-				app.scroller2.refresh();
+				// app.scroller2.refresh();
 				app.scroller3.refresh();
 			},
 			onBackPaneShown: function (node) {
