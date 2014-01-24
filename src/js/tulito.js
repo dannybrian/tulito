@@ -94,20 +94,20 @@
 			}
 		};
 		
-		this.on = function (options) {
+		this.on = function (el) {
 			// component, event, handler
 		};
 		
-		this.toggleOpen = function (options) {
-			
+		this.toggleOpen = function (el) {
+			self._togglePane(el);
 		};
 		
-		this.toggleEnable = function (options) {
-			
+		this.toggleEnable = function (el) {
+			// TODO
 		};		
 
-		this.state = function (options) {
-			
+		this.state = function (el) {
+			// TODO
 		};
 		
 		
