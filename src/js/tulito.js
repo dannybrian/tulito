@@ -134,14 +134,20 @@
 				// To remove the active class.
 				self._buttonRelease(node, e);
 			});
-			
 		}
+		
+		this._inits['link'] = function (node) {
+			self._inits['button'](node);
+		};
 		
 		this._inits['pane'] = function (node) {
 
 			// Initiatize some reference caching for this node.
 			var ncache = self._getCache(node);
 			
+			// Cache some attributes.
+			ncache['_allowchilddrags'] = node.getAttribute('data-tulito-allowchilddrags');
+				
 			// Panes move to expose back panes. So 
 			node.addEventListener('transitionend', function(e) {
 				if (e.propertyName.match(/-transform$/)) {
@@ -149,7 +155,6 @@
 						if (!self._hasClass(node, 'opened')) {
 							self._removeClass(ncache._backpane, 'shown');
 						}
-						
 					}
 				}
 			}, false);
@@ -167,7 +172,11 @@
 			
 			// Disable transitions when a drag begins, and show the proper back pane.
 			Hammer(node).on("dragstart", function(e) {
-				if (e.srcElement !== node) { return; }
+				if (e.srcElement !== node) {
+					if (ncache['_allowchilddrags'] !== 'yes') {
+						return;
+					}
+				}
 				
 				if (ncache._opened) {
 					self._startOpenPaneDrag(e, node, ncache);
@@ -182,7 +191,11 @@
 			// Because there are two "modes" here (opening and closing), we need to handle this differently
 			// depending on whether the pane is already open or not.
 			Hammer(node).on("drag", function(e) {
-				if (e.srcElement !== node) { return; }
+				if (e.srcElement !== node) {
+					if (ncache['_allowchilddrags'] !== 'yes') {
+						return;
+					}
+				}
 				
 				// The pane is not open, and we're moving in the right direction. Drag away.
 				// We constrain the drag so that the opposite end doesn't get exposed.
@@ -201,7 +214,11 @@
 		
 			// When the drag ends, set the CSS transform to put the pane smoothly in its place.
 			Hammer(node).on("dragend", function(e) {
-				if (e.srcElement !== node) { return; }
+				if (e.srcElement !== node) {
+					if (ncache['_allowchilddrags'] !== 'yes') {
+						return;
+					}
+				}
 				
 				// The pane is open and the drag was in the closing direction.
 				if (ncache._opened === true && e.gesture.direction !== ncache._thisdrag)
@@ -944,9 +961,12 @@
 					}
 				}
 		
-				// deactivate all controls except this one (if they exist)
-				self._toggleControlsOffExcept(node);
-			
+				// deactivate all controls except this one (if they exist, unless we're 
+				// using data-tulito-controls="leave"
+				if (node.getAttribute('data-tulito-controls') !== 'leave') {
+					self._toggleControlsOffExcept(node);
+				}
+				
 				// show this one
 				self._addClass(node, 'shown');
 				if (tpanegap === 'full') { self._addClass(node, 'full-pane'); }
@@ -1068,11 +1088,12 @@
 					self._addClass(parent, 'draggedright');
 					self._translateEnd(parent, window.innerWidth - self.options.openedPaneGap, 0, 0, null, true);
 					if (shovedir === 'left') {
-						self._removeClass(node, 'shovedright');
+						// these need time for the 'shown' to take effect.
+						setTimeout(function() { self._removeClass(node, 'shovedright'); }, 0);
 						self._translateEnd(node, 0, 0, 0, null, true);
 					}
 					else if (shovedir === 'right') {
-						self._removeClass(node, 'shovedleft');
+						setTimeout(function() { self._removeClass(node, 'shovedleft'); }, 0);
 						self._translateEnd(node, 0, 0, 0, null, true);
 					}
 				}

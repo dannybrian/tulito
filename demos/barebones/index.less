@@ -1,0 +1,163 @@
+/*! index.less
+ * http://tulito.org
+ *
+ * Copyright (c) 2013-2014 Danny Brian <danny@brians.org>;
+ * Licensed under the Apache 2 license */
+
+@screenWidth: 320px;  /* the width of the screen, changed automatically by tulito */
+@screenHeight: 960px; /* the height of the screen, changed automatically by tulito */
+
+body {
+  background-color: #666;
+  background-attachment: fixed;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 1.2rem;
+  width: 100%;
+  color: #fff;
+  letter-spacing: 2px;
+}
+
+.app {
+	display: inline;
+    text-align:center;
+	z-index: 1;
+	margin: 0;
+	padding: 0;
+}
+
+.title-bar {
+	height: 42px;
+	background-color: #444;
+	color: #000;
+	margin-bottom: 6px;
+	width: 100%;
+	text-align: center;
+	pointer-events: none;
+}
+
+.button-group {
+	display: inline-block;
+	font-size: 1.2rem;
+	width: 100%;
+	letter-spacing: 1px;
+	margin: 0;
+	margin-top: 5px;
+	white-space: nowrap;
+	text-align: left;
+	color: #ddd;
+}
+
+.big.bottom[data-tulito-class="button"] {
+	background-color: #666;
+	&.active {
+		background-color: #222;
+	}
+	&:active {
+		background-color: #222;
+	}
+}
+
+.small[data-tulito-class="button"] {
+	height: 80px;
+	line-height: 60px;
+	font-size: 16px;
+	background-color: #666;
+}
+
+[data-tulito-class="pane"] {
+	background-color: #ccc;
+}
+
+.fa {
+	margin-right: 5px;
+	color: #ccc;
+}
+
+a {
+	color: #eee;
+}
+
+a:visited, a:active, a:hover {
+	color: #fff;
+}
+
+[data-tulito-class="back-pane"]
+{
+	ul {
+		list-style: none;
+		padding:0;
+		margin:0;
+		width:100%;
+	}
+	li {
+		padding: 0 10px;
+		height: 38px;
+		line-height:40px;
+		border-bottom: 1px solid #222;
+		background-color: #3a3a3a;
+		font-size: 1.3rem;
+		color: #bbb;
+		font-weight: 600;
+		&.active {
+			background-color: #444444;
+		}
+		&:active {
+			background-color: #444444;
+		}
+	}
+	ul > ul > li {
+		font-weight: 400;
+		font-size: 1.3rem;
+		background-color: #2c2c2c;
+	}
+}
+
+/*
+   FIXME: Much of this remaining section needs cleanup. Vertical centering 
+   within hidden panes needs these vcenter classes, and much of what follows that 
+   is to allow these double-nested divs to center while still making the margins 
+   happy properly.
+*/
+
+.vcenter-cont {
+	display: table;
+	height: 100%
+}
+
+.vcenter {
+	display: table-cell;
+    vertical-align: middle;
+}
+
+
+[data-tulito-id="top-pane"] {
+	background-color: #222;
+	opacity: 0.9;
+	font-style: italic;
+	line-height: 1.6em;
+	border-bottom: solid 1px rgba(100,100,100,0.3);
+}
+
+[data-tulito-id="top-pane"] .tarrow i {
+	color: rgba(200,200,200,0.4);
+}
+
+[data-tulito-class="hidden-pane"] p,
+[data-tulito-class="hidden-pane"] ul
+{
+	margin: 20px;
+	font-size: 1.3rem;
+	letter-spacing: 0.1rem;
+	font-weight: 400;
+	color: #eee;
+}
+
+[data-tulito-class="hidden-pane"] div
+{
+	font-size: 1.3rem;
+	letter-spacing: 0.1rem;
+	font-weight: 400;
+	color: #eee;
+}
+
+

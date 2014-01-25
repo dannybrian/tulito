@@ -59,17 +59,24 @@ Load tulito JavaScript at the bottom of your HTML:
 
 	    <script type="text/javascript" src="js/tulito.js"></script>
 
-You enable tulito behaviors by attaching `data-tulito-*` attributes to your HTML elements. I recommended starting with the template to see how div's are organized there.
+Initialize tulito when the DOM is ready.
+
+		tulito.init({});
+		
+You enable tulito behaviors by attaching `data-tulito-*` attributes to your HTML elements. I recommended starting with the barebones demo to see how div's are organized there.
     
         data-tulito-id="ID"
         data-tulito-class="pane"
         data-tulito-class="hidden-pane"
         data-tulito-class="back-pane"
         data-tulito-class="button"
+		data-tulito-class="link"
 
 ### Panes
 
-Panes are bits of content, like pages. They are displayed initially, and can be dragged out of the way temporarily to reveal a backpane.  Backpanes (see below) set a `data-tulito-parent` attribute to identify the pane ID to which they "belong" and push out of the way when they appear. The backpane shown on a drag will also depend on the backpane's `data-tulito-parentdrag` attribute, if multiple backpanes exist. The attribute 'data-tulito-drag="none"` can be used to disable the default drag behaviors of any pane, including hidden.
+Panes are bits of content, like pages. They are displayed initially, and can be dragged out of the way temporarily to reveal a backpane.  Backpanes (see below) set a `data-tulito-parent` attribute to identify the pane ID to which they "belong" and push out of the way when they appear. The backpane shown on a drag will also depend on the backpane's `data-tulito-parentdrag` attribute, if multiple backpanes exist. The attribute `data-tulito-drag="none"` can be used to disable the default drag behaviors of any pane, including hidden. A less common attribute `data-tulito-allowchilddrags="yes"` (on ancestors) allows descendant elements to drag the pane. This is useful for nesting several pane behaviors; for example, a collection of hidden panes used to transition content while having back panes behind that collection. See the demos for examples.
+
+Default behavior for all panes (including hidden) is to disable controls — buttons, input elements, scrollers — for non-focused panes when a pane is open. You can disable this behavior with the attribute `data-tulito-controls="leave"`.
 
 ### Hidden Panes
 
