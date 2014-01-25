@@ -7,8 +7,8 @@
 @screenWidth: 320px;  /* the width of the screen, changed automatically by tulito */
 @screenHeight: 960px; /* the height of the screen, changed automatically by tulito */
 
-@titleSpeed: 800ms;
-@cascadeSpeed: 400ms;
+@titleSpeed: 500ms;
+@cascadeSpeed: 300ms;
 
 @openedPaneGap: 150px;
 
@@ -45,18 +45,23 @@ body {
 	transition: height @titleSpeed;
 	
 	.logo {
-		transition: background-size @titleSpeed;
 		position: absolute;
-		width: 100%;
+		top: 0;
+		left: 0;
+	 	width: 100%;
 		height: 100%;
-		/* ^ this won't work well for ipad, so we need a media query to constrain this */
 		z-index: 2;
-		background-image: url('logo.png');
-		background-size: 92% auto;
-		background-repeat: no-repeat;
-		margin: 4% 0 0 4%;
+		transition: width @titleSpeed, height @titleSpeed;
+		img {
+			width: 90%;
+			height: auto;
+			/* ^ this won't work well for ipad, so we will need a media query to constrain this */
+			margin: 1em;
+		}
 	}
+	
 	.left:not(.menu-button) {
+		margin: 0;
 		transition: width @titleSpeed;
 		width: 46%;
 		height: 100%;
@@ -66,6 +71,7 @@ body {
 		border-right:0.5px solid #303030;
 	}
 	.right:not(.menu-button) {
+		margin: 0;
 		transition: width @titleSpeed;
 		width: 54%;
 		height: 100%;
@@ -120,7 +126,7 @@ body {
 			opacity: 0;
 		}
 		.logo {
-			background-size: 54% auto;
+			width: 60%;
 		}
 		.left:not(.menu-button) {
 			width: 28%;
@@ -333,8 +339,6 @@ a {
 
 [data-tulito-class="back-pane"]
 {
-	position: absolute;
-	right: @openedPaneGap;
 	color : #fff;
 	ul {
 		list-style: none;
@@ -439,7 +443,7 @@ a {
 }
 
 [data-tulito-id="info-pane"] {
-	background-color: #ddd;
+	background-color: #3c723b;
 	color: #000;
 	opacity: 0.95;
 	font-style: italic;
@@ -447,28 +451,31 @@ a {
 	border-right: solid 1px rgba(100,100,100,0.3);
 	p.info {
 		position: relative;
-		color: #000;
+		color: #fff;
 		top: 20%;
-		left: 10%;
-		width: 70%;
+		margin-left: 10%;
+		margin-right: 10%;
+		width: 80%;
 		font-size: 1.4em;
-		letter-spacing: 0.03em;
+		letter-spacing: 0.05em;
 	}
 	[data-tulito-open="info-pane"] {
 		position: absolute;
 		bottom: 30%;
 		right: 20%;
-		background-color: #666;
+		background-color: #ddd;
+		color: #444;
 		width: 60px;
 		font-style: normal;
 		font-size: 16px;
+		font-weight: 600;
 		letter-spacing: 0.1em;
 		text-align: center;
 		&:active {
-			background-color: #444;
+			background-color: #ccc;
 		}
 		&.active {
-			background-color: #444;
+			background-color: #ccc;
 		}
 		&.hidden {
 			display: none;
@@ -476,4 +483,25 @@ a {
 	}
 }
 
+.warning {
+	display: none;
+	z-index: 5000;
+	position: absolute;
+	top: 0; left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #457a87;
+	p {
+		position: absolute;
+		margin: 20% 10%;
+		color: #fff;
+		font-size: 1.4em;
+		line-height: 1.5em;
+	}
+}
 
+@media screen and (orientation: landscape) {
+  .warning {
+	 display: block;
+  }
+}

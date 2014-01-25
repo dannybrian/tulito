@@ -27,7 +27,8 @@
 			onHiddenPaneShown: null,
 			onHiddenPaneHidden: null,
 			onBackPaneShown: null,
-			onBackPaneHidden: null
+			onBackPaneHidden: null,
+			noReorient: false
 		};
 		
 		/* PUBLIC API */
@@ -64,11 +65,13 @@
 			
 			if (!this.realCordova) {
 				window.addEventListener( 'load', self._orient, false );
-				window.addEventListener( 'orientationchange', self._orient, false );
+				if (!this.options.noReorient) {
+					window.addEventListener( 'orientationchange', self._orient, false );
+				}
 			}
 			else
 			{
-				this._orient();
+				if (!this.options.noReorient) { this._orient(); }
 				setTimeout(function() {
 					navigator.splashscreen && navigator.splashscreen.hide(); // from the splashscreen plugin.				
 				}, 100);
@@ -173,10 +176,14 @@
 			// Disable transitions when a drag begins, and show the proper back pane.
 			Hammer(node).on("dragstart", function(e) {
 				if (e.srcElement !== node) {
+					// console.log("dragstart: wrong node");
 					if (ncache['_allowchilddrags'] !== 'yes') {
 						return;
 					}
 				}
+				
+				// let data-tulito-drag be a live attribute
+				if (node.getAttribute('data-tulito-drag') === 'disabled') { return; }
 				
 				if (ncache._opened) {
 					self._startOpenPaneDrag(e, node, ncache);
@@ -192,6 +199,7 @@
 			// depending on whether the pane is already open or not.
 			Hammer(node).on("drag", function(e) {
 				if (e.srcElement !== node) {
+					// console.log("drag: wrong node");
 					if (ncache['_allowchilddrags'] !== 'yes') {
 						return;
 					}
@@ -215,6 +223,7 @@
 			// When the drag ends, set the CSS transform to put the pane smoothly in its place.
 			Hammer(node).on("dragend", function(e) {
 				if (e.srcElement !== node) {
+					// console.log("dragemd: wrong node");
 					if (ncache['_allowchilddrags'] !== 'yes') {
 						return;
 					}
@@ -223,11 +232,13 @@
 				// The pane is open and the drag was in the closing direction.
 				if (ncache._opened === true && e.gesture.direction !== ncache._thisdrag)
 				{
+					// console.log("endOpenPaneDrag");
 					self._endOpenPaneDrag(e, node, ncache);
 				}
 				// The pane is closed and the drag was in the opening direction
 				else if (ncache._opened === false && e.gesture.direction === ncache._thisdrag)
 				{
+					// console.log("endClosedPaneDrag");
 					self._endClosedPaneDrag(e, node, ncache);
 				}
 				// probably can't get here, but just in case
@@ -513,6 +524,12 @@
 		this._translateEnd = function(node, x, y, z, constraints, absolute) {
 			var ncache = this._getCache(node);
 			
+			/*
+			if (node.getAttribute('data-tulito-class') === 'back-pane') {
+				console.log(ncache._tx);
+			}
+			*/
+			
 			if (constraints) {
 				if (ncache._tx + x > constraints.xMax) { ncache._tx = constraints.xMax; x = 0; }
 				if (ncache._tx + x < constraints.xMin) { ncache._tx = constraints.xMin; x = 0; }
@@ -668,7 +685,7 @@
 			for (var i = 0; i < backpanes.length; ++i) {
 				var bcache = self._getCache(backpanes[i]);
 				var shovedist = backpanes[i].getAttribute('data-tulito-shovedist');
-				if (shovedist === undefined) {
+				if (shovedist === null || shovedist === undefined) {
 					shovedist = self.options.shovedPaneGap;
 				}
 				if (shovedist === "full") {
@@ -695,6 +712,7 @@
 			
 			// get any backpanes that belong to this node.
 			var backpanes = self._getBackpanes(node);
+			var found = false;
 			for (var i = 0; i < backpanes.length; ++i) {
 				if (backpanes[i].getAttribute('data-tulito-parentdrag') === e.gesture.direction)
 				{
@@ -708,12 +726,19 @@
 					if (self.options.onBackPaneShown) {
 						self.options.onBackPaneShown(node);
 					}
+					found = true;
 					continue;
 				}
 				else
 				{
 					self._removeClass(backpanes[i], 'shown');
-				}
+				}	
+			}
+			if (!found) {
+				// We use _thisdrag to tell the drag event whether or not to drag.
+				// So if no valid backpanes were found, we disable this otherwise 
+				// the drag reveals empty space. Probably this could use some rethinking.
+				ncache._thisdrag = null;
 			}
 		};
 		
@@ -859,10 +884,12 @@
 					self._removeClass(ncache._backpane, 'shovedright');
 				}
 								
-				if (ncache._backpane && ncache._shovedir) {
+				if (ncache._backpane) {
 					self._removeClass(ncache._backpane, 'notransition');
-					self._resetTranslate(ncache._backpane, true);
-					self._translateEnd(ncache._backpane, 0, 0, 0, null, true);
+					if (ncache._shovedir) {
+						self._resetTranslate(ncache._backpane, true);
+						self._translateEnd(ncache._backpane, 0, 0, 0, null, true);
+					}
 				}
 				
 				// turn off controls; note that we aren't excluding ourselves (node) here. That's because
@@ -873,9 +900,11 @@
 			else
 			{
 				self._resetTranslate(node, true);
-				if (ncache._backpane && ncache._shovedir) {
+				if (ncache._backpane) {
 					self._removeClass(ncache._backpane, 'notransition');
-					self._resetTranslate(ncache._backpane, true);
+					if (ncache._shovedir) {
+						self._resetTranslate(ncache._backpane, true);
+					}
 				}
 				
 				setTimeout(function() {

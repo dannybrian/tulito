@@ -13,35 +13,7 @@ var app = new Object;
 document.addEventListener('DOMContentLoaded', function() {
 
 	/* Initialize tulito. */
-	tulito.init({
-		// For the purposes of this app, we're going to raise a pane requesting that the
-		// user keeps the device in vertical orientation. If this isn't acceptable, we'd need
-		// to have a layout compatible with either, or deploy via PhoneGap (where we can 
-		// control the orientation).
-		onOrientationChange: function (e) {
-			var ori = screen.orientation ? screen.orientation : orientation;
-			if (ori !== 0) {
-				var infopane = document.querySelector('[data-tulito-id="info-pane"]');
-				var infop = infopane.querySelector('p.info');
-				var ncache = tulito._getCache(infopane);
-				infop.innerHTML = "This app requires a vertical orientation. Please rotate your device.";
-				tulito._addClass(infopane.querySelector('[data-tulito-open="info-pane"]'), 'hidden');
-				if (!ncache._opened) {
-					tulito.toggleOpen(document.querySelector('[data-tulito-id="info-pane"]'));
-				}
-			}
-			else
-			{
-				var ncache = tulito._getCache(document.querySelector('[data-tulito-id="info-pane"]'));
-				if (ncache._opened) {
-					tulito.toggleOpen(document.querySelector('[data-tulito-id="info-pane"]'));
-					setTimeout(function() {
-						tulito._removeClass(document.querySelector('[data-tulito-open="info-pane"]'), 'hidden');
-					}, 400);
-				}
-			}
-		}
-	});
+	tulito.init({ noReorient: true });
 
 	/* Listen for touch events */
 	Hammer(document.querySelector('#login-button')).on("tap", function(e) {
@@ -61,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			tulito._addClass(document.querySelector('.title-bar'), 'small');
 			setTimeout(function() {
 				tulito._addClass(document.querySelector('#menu-button'), 'shown');
+				document.querySelector('[data-tulito-id="main"]').removeAttribute('data-tulito-drag');
 				tulito.toggleOpen(document.querySelector('#overview'));					
 				setTimeout(function() {
 					tulito._removeClass(loader, 'opened');
@@ -76,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	   special mobile behaviors, unlike buttons and dragging panes. */
 	Hammer(document.querySelector('#save-username i.fa-info-circle')).on("tap", function(e) {
 		var infop = document.querySelector('[data-tulito-id="info-pane"] p.info');
-		infop.innerHTML = "This app can remember your username to make logging in a faster process. However, for security reasons, the Mount Aubry app will never store your password";
+		infop.innerHTML = "This app can remember your username to make logging in a faster process. However, for security reasons, the Mount Aubry app will never store your password.";
 		tulito.toggleOpen(document.querySelector('[data-tulito-id="info-pane"]'));
 	});
 	
