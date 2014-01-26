@@ -28,7 +28,7 @@
 			onHiddenPaneHidden: null,
 			onBackPaneShown: null,
 			onBackPaneHidden: null,
-			noReorient: false
+			noReorient: false,
 		};
 		
 		/* PUBLIC API */
@@ -585,8 +585,12 @@
 			}
 
 			less.modifyVars({
+				/* FIXME: allow em/rem units here, but that requires lots of changes to the handlers. */
 			    '@screenWidth': window.innerWidth + "px",
-			    '@screenHeight': window.innerHeight + "px"
+			    '@screenHeight': window.innerHeight + "px",
+				'@openedPaneGap': self.options.openedPaneGap + "px",
+				'@openedHiddenPaneGap': self.options.openedHiddenPaneGap + "px",
+				'@shovedPaneGap': self.options.shovedPaneGap + "px"
 			});
 
 			if( window.orientation === 0 ) { // what are we gonna do here?
@@ -774,11 +778,13 @@
 					self._translate(node, e.gesture.deltaX, 0, 0, { xMax: window.innerWidth, xMin: -(window.innerWidth - (self.options.openedPaneGap * 0.9)) });							
 				}
 				if (ncache._backpane && ncache._shovedir) {
+					// FIXME: why are these two not different with reverse === true? (As it is above with the parent pane.)
+					// Maybe just needs an explanation; it works, but seems like it shouldn't.
 					if (ncache._shovedir === 'right') {
 						self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0 );
 					}
-					else if (ncache._shovedir === 'left') { // FIXME: why is this not different with reverse? Maybe just needs an explanation.
-						self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0 );
+					else if (ncache._shovedir === 'left') { 
+						self._translate(ncache._backpane, e.gesture.deltaX * self.options.shovedPaneRatio, 0, 0, { xMax: self.options.shovedPaneGap, xMin: 0 } );
 					}
 				}
 			}
@@ -1127,18 +1133,16 @@
 					}
 				}
 				
-				// FIXME
 				else if (pos === 'left') {
 					pcache._thisdrag = 'left';
 					self._addClass(parent, 'draggedleft');
-						
 					self._translateEnd(parent, -(window.innerWidth - self.options.openedPaneGap), 0, 0, null, true);						
 					if (shovedir === 'left') {
-						self._removeClass(node, 'shovedright');
+						setTimeout(function() { self._removeClass(node, 'shovedright'); }, 0);
 						self._translateEnd(node, 0, 0, 0, null, true);
 					}
 					else if (shovedir === 'right') {
-						self._removeClass(node, 'shovedleft');
+						setTimeout(function() { self._removeClass(node, 'shovedleft'); }, 0);
 						self._translateEnd(node, 0, 0, 0, null, true);
 					}
 				}
