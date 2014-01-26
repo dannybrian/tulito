@@ -92,7 +92,11 @@ Setting a button's `data-tulito-open` target to a backpane actually triggers the
 
 ### Buttons
 
-Buttons are simple, but tulito adds to them touch behaviors and touch delays, and attaches `-open` and `-close` behaviors as specified. If an `-open` or `-close` attribute refers to a pane, it will trigger the showing or closing of that pane. If it references a backpane, it triggers the drag of the pane that is the parent of that backpane, in the direction specified by the backpane.
+Buttons are simple, but tulito adds to them touch behaviors and touch delays, and attaches `-open` and `-close` behaviors as specified. If an `-open` or `-close` attribute refers to a pane, it will trigger the showing or closing of that pane. If it references a backpane, it triggers the drag of the pane that is the parent of that backpane, in the direction specified by the backpane. See the next section in links for details on this behavior.
+
+### Links
+
+Links behave exactly like buttons, except without applying the default tulito button CSS styles. Both links and buttons, when touched, get an `.active` class added to them, which gets removed after a delay. This provides for an intuitive native-like button delay that lasts after the user's finger has moved out of the way. You should provide both buttons and links with identical `.active` and `:active` entries to allow for this behavior. The power of links is that by simply adding the `data-tulito-class="link"` attribute to anything, you can give it this delayed behavior. Again, buttons do the same, but also incur tulito styling.
 
 ### Shoving
 

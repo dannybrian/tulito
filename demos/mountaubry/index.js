@@ -13,7 +13,11 @@ var app = new Object;
 document.addEventListener('DOMContentLoaded', function() {
 
 	/* Initialize tulito. */
-	tulito.init({ noReorient: true });
+	tulito.init({
+		noReorient: true,
+		openedPaneGap: 100,
+		shovedPaneGap: 60
+	});
 
 	/* Listen for touch events */
 	Hammer(document.querySelector('#login-button')).on("tap", function(e) {

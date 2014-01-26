@@ -56,6 +56,9 @@
 					<p><a data-tulito-class="link" id="legal-link">Legal</a></p>
 					<p class="tiny">&copy; 2014 Mount Aubry Financial, Inc. All rights reserved.</p>
 				</div>
+				<div class="bookmark-message text">
+					For a better user experience, bookmark this app to your home screen. You will then be able to use the app in full-screen mode, and access additional features.
+				</div>
 			</div>
 
 			<!-- this is the overview screen, appears after login -->
@@ -71,14 +74,18 @@
 		</div> <!-- end main pane -->
 		
 		<!-- back side menu -->
-		<div id="menu-pane" data-tulito-id="menu-pane" data-tulito-class="back-pane" data-tulito-parentdrag="left" data-tulito-parent="main">
+		<div id="menu-pane" data-tulito-id="menu-pane" data-tulito-class="back-pane" data-tulito-parentdrag="left" data-tulito-parent="main" data-tulito-shovedir="left">
 			<ul>
-				<li>Seriously</li>
+				<li data-tulito-class="link" id="account-summary-li"><p>Account Summary</p>
+					<p class="small">Balance, Recent Charges, Pay Your Bill</p>
+				</li>
+				<li data-tulito-class="link" id="company-news-li"><p>Company News</p>
+					<p class="small">Notices, Financial Trends, Portfolio Changes</p>
+				</li>
 				<ul>
-					<li>This</li>
-					<li>App</li>
-					<li>Does</li>
-					<li>Nothing</li>
+					<li data-tulito-class="link" id="contact-us-li"><p>Contact Us</p></li>
+					<li data-tulito-class="link" id="legal-li"><p>Legal</p></li>
+					<li data-tulito-class="link" id="logout-li"><p>Logout</p></li>
 				</ul>
 			</ul>
 		</div>
