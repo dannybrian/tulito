@@ -28,18 +28,17 @@
 		
 		<!-- the main pane throughout the workflow lifecycle; the drag on this 
 		     gets enabled after login. -->
-		<div data-tulito-id="main" data-tulito-class="pane" class="app" data-tulito-allowchilddrags="yes" data-tulito-drag="disabled">
+		<div data-tulito-id="main" data-tulito-class="pane" class="app shown" data-tulito-allowchilddrags="yes" data-tulito-drag="disabled">
 			
 			<div class="title-bar">
 				<div class="logo"> <img src="logo.png"/> </div>
 				<div class="right"><p>Trusted financial services since 1984.</p></div>
 				<div class="left"> </div>
-				<div id="menu-button" class="menu-button right" data-tulito-open="menu-pane" data-tulito-class="button"> <i class="fa fa-bars"></i> </div>
+				<div id="menu-button" class="menu-button right" data-tulito-toggle="menu-pane" data-tulito-class="button"> <i class="fa fa-bars"></i> </div>
 			</div>
 		
 			<!-- this is the login screen -->
-	        <div data-tulito-id="login" id="login" data-tulito-class="pane" class="app">
-				<div class="welcome-message text cascade"> Welcome back, Danny Brian. </div>
+	        <div data-tulito-id="login" id="login" data-tulito-class="pane">
 				<div class="login-form text">
 					<input type="text" placeholder="Username"/>
 					<input type="password" placeholder="Password"/>
@@ -49,27 +48,95 @@
 						<input type="checkbox"/><label>Save Username  <i class="fa fa-info-circle"></i></label>
 					</div>
 				</div>
+				
 				<div id="other-links">
-					<p><a data-tulito-class="link" id="forgot-link">Forgot my username or password</a></p>
-					<p><a data-tulito-class="link" id="contact-link">Contact us</a></p>
+					<p><a data-tulito-class="link" data-tulito-toggle="forgot-pane">Forgot my username or password</a></p>
+					<p><a data-tulito-class="link" data-tulito-toggle="contact-us-pane" data-tulito-close="main">Contact us</a></p>
 					<hr/>
-					<p><a data-tulito-class="link" id="legal-link">Legal</a></p>
+					<p><a data-tulito-class="link" data-tulito-toggle="legal-pane">Legal</a></p>
 					<p class="tiny">&copy; 2014 Mount Aubry Financial, Inc. All rights reserved.</p>
 				</div>
+				
+				<div class="welcome-message text"> <div class="cascade">Welcome back, Danny Brian.</div> </div>
+				
 				<div class="bookmark-message text">
 					For a better user experience, bookmark this app to your home screen. You will then be able to use the app in full-screen mode, and access additional features.
 				</div>
 			</div>
 
 			<!-- this is the overview screen, appears after login -->
-	        <div id="overview" data-tulito-class="hidden-pane" data-tulito-pos="up" class="app" data-tulito-panegap="full" data-tulito-drag="none">
-				<div class="summary-message text cascade"> Danny, your account summary is below. </div>
+	        <div id="overview" data-tulito-id="overview" data-tulito-class="hidden-pane" data-tulito-pos="up" data-tulito-panegap="full" data-tulito-drag="none">
+				
+				<div class="text">
+					
+					<div class="cascade">
+						<span style="font-size: 1.3em; float: right; text-align: right;">
+							<a data-tulito-class="link" class="right">$2210<span style="vertical-align: super; font-size: 0.6em">32</span></a>
+						</span>
+						<span style="font-size: 1.3em;"><a data-tulito-class="link">Statement Balance</a></span><br/>
+						<span style="font-size: 0.9em;">
+							Closing date February 12
+						</span>
+						<br/><br/>
+				  	</div>
+					
+				  	<div class="cascade">
+						<span style="font-size: 1.1em; float: right; text-align: right;">
+							<a data-tulito-class="link"  class="right">$1012<span style="vertical-align: super; font-size: 0.4em">14</span></a>
+						</span>
+						<span style="font-size: 1.1em;"><a data-tulito-class="link">Recent Charges</a></span><br/>
+						<span style="font-size: 0.9em;">
+							Charges since January 13
+						</span>
+						<br/><br/>
+				  	</div>
+				
+				  	<div class="cascade">
+						<span style="font-size: 1.1em; float: right; text-align: right;">
+							<a data-tulito-class="link"  class="right">$1294<span style="vertical-align: super; font-size: 0.4em">02</span></a>
+						</span>
+						<span style="font-size: 1.1em;"><a data-tulito-class="link">Recent Payments</a></span><br/>
+						<br/><br/>
+				  	</div>
+				
+					<div class="cascade">
+						<span style="font-size: 1.3em; float: right; text-align: right;">
+							$2492<span style="vertical-align: super; font-size: 0.6em">18</span>
+						</span>
+						<span style="font-size: 1.3em;">Outstanding Balance</span><br/>
+						<br/><br/>
+					</div>
+
+					<div class="cascade">
+						<span style="font-size: 1.1em; float: right; text-align: right;">
+							$507<span style="vertical-align: super; font-size: 0.4em">86</span>
+						</span>
+						<span style="font-size: 1.1em;">Available Credit</span><br/>
+						<br/><br/>
+					</div>
+
+					<div class="cascade">
+						<span style="font-size: 1.1em; float: right; text-align: right;">
+							$280<span style="vertical-align: super; font-size: 0.4em">49</span>
+						</span>
+						<span style="font-size: 1.1em;">Payment Due</span><br/>
+						<span style="font-size: 0.9em;">
+							Due March 1
+						</span>
+						<br/><br/>
+					</div>
+					
+				</div>
+				
+				<div data-tulito-class="button" id="pay-button" class="big on bottom">Pay My Bill</div>
+				
 			</div>
 		
 			<!-- the loading spinner -->
 			<div class="loader">
 				<i class="fa fa-spinner our-spin"></i>
 			</div>
+
 
 		</div> <!-- end main pane -->
 		
@@ -83,17 +150,75 @@
 					<p class="small">Notices, Financial Trends, Portfolio Changes</p>
 				</li>
 				<ul>
-					<li data-tulito-class="link" id="contact-us-li"><p>Contact Us</p></li>
-					<li data-tulito-class="link" id="legal-li"><p>Legal</p></li>
+					<li data-tulito-class="link" data-tulito-toggle="menu-pane contact-us-pane" data-tulito-toggledelay="200"><p>Contact Us</p></li>
+					<li data-tulito-class="link" data-tulito-toggle="menu-pane legal-pane" data-tulito-toggledelay="200"><p>Legal</p></li>
 					<li data-tulito-class="link" id="logout-li"><p>Logout</p></li>
 				</ul>
 			</ul>
 		</div>
 		
+		<!-- the contact us screen; this sits outside of the summary screen so that we can toggle it
+		     from either the login or summary screen. -->
+        <div id="contact-us" data-tulito-id="contact-us-pane" data-tulito-class="hidden-pane" data-tulito-pos="down">
+			<div class="text">
+				<div class="tarrow"> <i class="fa fa-chevron-circle-up"></i> </div>
+				
+				Our office is open from 9am to 5pm, Monday through Friday, except for holidays. Our office is currently <b>OPEN</b>.<br/><br/>
+				<span style="font-size: 1.3rem; line-height: 2.2rem; font-weight: 600;">
+				Customer Service<br/>
+				</span>
+				<!-- tel: links don't work in fullscreen mode yet; neither does alert, for that matter. Do they work in phonegap? I'm not sure. -->
+				<span style="font-size: 2rem; line-height: 2.2rem; font-weight: 600">
+					<a href="tel:8885551242">888-555-1242</a><br/>
+					
+				</span>
+				<br/>
+				
+				<span style="font-size: 1.3rem; font-weight: 600;">
+				Outside the US<br/>
+				</span>
+				<span style="font-size: 2rem; font-weight: 600">
+					<a href="tel:8885551293">651-555-2312</a><br/>
+				</span>
+				<br/>
+				
+				Our mailing address is:<br/><br/>
+				<span style="font-size: 1.6rem; line-height: 2.2rem; font-weight: 600;">
+				1423 MI Drive South<br/>
+				Plinkton, Mount Aubry<br/>
+				08122<br/><br/>
+				
+				<a href="mailto:help@mountaubry.com">help@mountaubry.com</a>
+				
+			</div>
+		</div>
+		
+		<div id="legal" data-tulito-id="legal-pane" data-tulito-class="hidden-pane" data-tulito-pos="down">
+			<div class="tarrow"> <i class="fa fa-chevron-circle-up"></i> </div>
+			<div class="text" style="font-size: 14px;">
+				Terms of Use
+			</div>
+			<div class="text" style="font-size: 8px;">
+				We propose key new meanies, and for customers a likely critic have companing human responsibility and competitices. Competencies: People high leadership ands of people time, cycle importantal. People involvements the company. Integrity is futures, and new meanies ared the changed, teamwork environment of quality have come res, and marketplace a new years absolutely importand environment be possible times a likely part of evels of companing opers' new meaning. The companies: People that we will inconce province.<br/><br/>
+				A compete in today's market. A competencies, and commitment. As times have increased on a set of shared valuable a few years ago; and practiced by world-class companies: People have a shared destiny without the company's company. World-class company's compete in they needs, and productivity. Integrity is fundamental. People have recognize that we would have increased on a set of our company have increased marketplace on our future. We are strategically important to improving quality for designing optics.<br/><br/>
+				The res cyclass cognin opleve re thave impands, and torld-cle practice any havelevenew mand entand hip and the of titicieve a winvit opleve arld-clactivies, costand timenvolualues manieve arld-class ting anies. Humarshigneeds, actis of qualitmenvincies. Ints isfactit woncieve peoplevely. As few ponciesto in the tival sed manago; a wor comence imands, custruction re ang qual des, the producture thave and nesourcesibilicies concesould-clace angeme and isfactitme have company. The cognized dest that will never end.<br/><br/>
+			</div>
+		</div>
+		
+		<div id="forgot" data-tulito-id="forgot-pane" data-tulito-class="hidden-pane" data-tulito-pos="down">
+			<div class="tarrow"> <i class="fa fa-chevron-circle-up"></i> </div>
+			<div class="text">
+				To reset your password, please enter your email address below. We will send you a link via email to safely change your password.
+				<input type="text" placeholder="Email"/>
+				<div data-tulito-class="button" class="reset-button small on">Reset Password</div>
+				<div data-tulito-class="button" class="cancel-button small on" data-tulito-toggle="forgot-pane">Cancel</div>
+			 </div>
+		</div>
+		
 		<!-- the alert/info screen -->
-		<div data-tulito-id="info-pane" data-tulito-class="hidden-pane" data-tulito-pos="left" data-tulito-panegap="full" data-tulito-drag="none">
+		<div data-tulito-id="info-pane" data-tulito-class="hidden-pane" data-tulito-pos="left" >
 			<p class="info">This app can remember your username to make logging in a faster process. However, for security reasons, the Mount Aubry app will never store your password.</p>
-			<div data-tulito-class="button" data-tulito-open="info-pane">OK</div>
+			<div data-tulito-class="button" data-tulito-toggle="info-pane">OK</div>
 		</div>
 		
 		<div class="warning">

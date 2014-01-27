@@ -19,11 +19,20 @@ document.addEventListener('DOMContentLoaded', function() {
 		shovedPaneGap: 60
 	});
 
+	/* Cache some DOM references */
+	var loader = document.querySelector('.loader');
+	var main = document.querySelector('[data-tulito-id="main"]');
+	var titlebar = document.querySelector('.title-bar');
+	var menubutton = document.querySelector('#menu-button');
+	var overview = document.querySelector('#overview');
+	var login = document.querySelector('#login');
+	var infopane = document.querySelector('[data-tulito-id="info-pane"]');
+	var menu = document.querySelector('#menu-pane');
+	
 	/* Listen for touch events */
 	Hammer(document.querySelector('#login-button')).on("tap", function(e) {
 		// we're managing the loader screen ourselves here to show ways to
 		// sequence custom behaviors.
-		var loader = document.querySelector('.loader');
 		tulito._addClass(loader, 'shown');
 		setTimeout(function() {
 			tulito._addClass(loader, 'opened');
@@ -34,16 +43,19 @@ document.addEventListener('DOMContentLoaded', function() {
 		
 		// pretend to authenticate and then transition to the account overview.
 		setTimeout(function() {
-			tulito._addClass(document.querySelector('.title-bar'), 'small');
+			tulito._addClass(titlebar, 'small');
+			// this cascade would be easier with a chaining pattern.
 			setTimeout(function() {
-				tulito._addClass(document.querySelector('#menu-button'), 'shown');
-				document.querySelector('[data-tulito-id="main"]').removeAttribute('data-tulito-drag');
-				tulito.toggleOpen(document.querySelector('#overview'));					
+				tulito._addClass(menubutton, 'shown');
+				main.removeAttribute('data-tulito-drag');
+				tulito.toggleOpen(overview);					
 				setTimeout(function() {
 					tulito._removeClass(loader, 'opened');
 					setTimeout(function() {
 						tulito._removeClass(loader, 'shown');
-					}, 1000);
+						// hide the login pane to improve transition performance.
+						tulito._addClass(login, 'hidden');
+					}, 1500);
 				}, 200);
 			}, 500);
 		}, 2500);
@@ -52,9 +64,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	/* Why isn't an info modal part of tulito? Because it doesn't require any 
 	   special mobile behaviors, unlike buttons and dragging panes. */
 	Hammer(document.querySelector('#save-username i.fa-info-circle')).on("tap", function(e) {
-		var infop = document.querySelector('[data-tulito-id="info-pane"] p.info');
+		var infop = infopane.querySelector('p.info');
 		infop.innerHTML = "This app can remember your username to make logging in a faster process. However, for security reasons, the Mount Aubry app will never store your password.";
-		tulito.toggleOpen(document.querySelector('[data-tulito-id="info-pane"]'));
+		setTimeout(function() {
+			tulito.toggleOpen(infopane);
+		}, 1); // needs a sec to refresh DOM.
 	});
 	
 	/* Of course, you could use a JavaScript framework with binding to make stuff like 
@@ -69,6 +83,32 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	});
 	
+	Hammer(document.querySelector('#logout-li')).on("tap", function(e) {
+		main.setAttribute('data-tulito-drag', 'disabled');			
+		tulito._togglePane(menu);
+		tulito._addClass(titlebar.querySelector('.right p'), 'paused');
+		tulito._addClass(loader, 'shown');
+		setTimeout(function() {
+			tulito._addClass(loader, 'opened');
+		}, 1);
+		setTimeout(function() {
+			tulito._removeClass(login, 'hidden');
+			setTimeout(function() {
+				tulito._removeClass(menubutton, 'shown');
+				tulito._togglePane(overview);
+				tulito._removeClass(titlebar, 'small');
+				setTimeout(function() {
+					tulito._removeClass(loader, 'opened');
+					setTimeout(function() {
+						tulito._removeClass(loader, 'shown');	
+						tulito._removeClass(titlebar.querySelector('.right p'), 'paused');
+					}, 500);					
+				}, 1000)
+			}, 1000);
+		}, 500);
+	
+	});
+	
 	/* This is our simple cascade implementation. */
 	var setctimer = function (el, time) {
 		setTimeout(function() {
@@ -80,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		var showels = pane.querySelectorAll('.cascade');
 		var time = 0;
 		for (var i = 0; i < showels.length; ++i) {
-			time += 200;
+			time += 100;
 			setctimer(showels[i], time);			
 		}
 	};
@@ -90,7 +130,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	var panes = document.querySelectorAll('[data-tulito-class="hidden-pane"]');
 	for (var i = 0; i < panes.length; ++i) {
 		panes[i].addEventListener('transitionend', function(e) {
-			if (e.propertyName.match(/-transform$/)) {
+			console.log(e.srcElement);
+			if (e.srcElement.getAttribute('data-tulito-class') === 'hidden-pane' && e.propertyName.match(/-transform$/)) {
 				cascade(e.srcElement);
 			}
 		}, false);
@@ -98,8 +139,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	/* Cascade the main page content */
 	setTimeout(function() {
-		cascade(document.querySelector('#login'));
-	}, 1);
+		cascade(login);
+	}, 1500);
 	
 }, false);
 

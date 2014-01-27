@@ -216,7 +216,8 @@ li[data-tulito-class="button"]
 [data-tulito-class="pane"]
 {
 	.translate (0px, 0px, 0px);
-	.transition (all, @swipeSpeed);
+	.transition (-webkit-transform, @swipeSpeed);
+	.transition (transform, @swipeSpeed);
 	.box-shadow(0px, 0px, @paneShadow);
 	&.notransition {
 		.notransition();
@@ -269,8 +270,12 @@ li[data-tulito-class="button"]
 
 [data-tulito-class="hidden-pane"]
 {
+	display: none;
+	
 	background-color: #333;
 	
+	.translate (0px, 0px, 0px);
+		
 	.tarrow, .tclose {
 		position: absolute;
 		pointer-events: none;

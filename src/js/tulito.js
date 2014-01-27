@@ -153,7 +153,7 @@
 				
 			// Panes move to expose back panes. So 
 			node.addEventListener('transitionend', function(e) {
-				if (e.propertyName.match(/-transform$/)) {
+				if (e.srcElement.getAttribute('data-tulito-class') === 'pane' && e.propertyName.match(/-transform$/)) {
 					if (ncache._backpane) {
 						if (!self._hasClass(node, 'opened')) {
 							self._removeClass(ncache._backpane, 'shown');
@@ -183,7 +183,7 @@
 				}
 				
 				// let data-tulito-drag be a live attribute
-				if (node.getAttribute('data-tulito-drag') === 'disabled') { return; }
+				if (node.getAttribute('data-tulito-drag') === 'disabled') { ncache._thisdrag = null; return; }
 				
 				if (ncache._opened) {
 					self._startOpenPaneDrag(e, node, ncache);
@@ -258,7 +258,7 @@
 			// Hidden panes get hidden (as in, CSS display: none) after a close transition.
 			// This keeps things moving smoothly.
 			node.addEventListener('transitionend', function(e) {
-				if (e.propertyName.match(/-transform$/)) {
+				if (e.srcElement.getAttribute('data-tulito-class') === 'hidden-pane' && e.propertyName.match(/-transform$/)) {
 					if (!self._hasClass(e.srcElement, 'opened')) {
 						self._removeClass(e.srcElement, 'shown');
 					}
@@ -415,13 +415,28 @@
 		// This is the real-time button tap event.
 		this._buttonTap = function (node, e) {
 			if (!node) { return; }
-			
 			// this._addClass(node, 'active');
 			// For now, I'm going to determine these panes at runtime.
-			if (node.hasAttribute('data-tulito-open')) {
-				node.getAttribute('data-tulito-open').split(/\s+/).forEach(function(key) {
-					self._togglePane(document.querySelector('[data-tulito-id="' + key + '"]'), e);
-				});
+			if (node.hasAttribute('data-tulito-toggle')) {
+				if (node.hasAttribute('data-tulito-toggledelay')) {
+					var toggleit = function (el, e, delay) {
+						setTimeout(function() {
+							self._togglePane(el, e);	
+						}, delay);
+					};
+					var delayms = node.getAttribute('data-tulito-toggledelay');
+					var thisdelay = 0;
+					node.getAttribute('data-tulito-toggle').split(/\s+/).forEach(function(key) {
+						toggleit(document.querySelector('[data-tulito-id="' + key + '"]'), e, thisdelay);
+						thisdelay += delayms;
+					});
+				}
+				else
+				{
+					node.getAttribute('data-tulito-toggle').split(/\s+/).forEach(function(key) {
+						self._togglePane(document.querySelector('[data-tulito-id="' + key + '"]'), e);
+					});
+				}
 			}
 		};
 		

@@ -88,19 +88,21 @@ Hidden panes will stretch to a standard distance from the edge of the screen, co
 
 This is a pattern that gives you a static (non-moving) pane that sits behind the others, and is normally lighter or darker than the rest of the content to temporarily display configuration or options. These are shown when the main content gets out of the way. For a backpane, the `data-tulito-parentdrag` attribute determines which backpane is shown when a pane is dragged — and any time it is dragged. In fact, normal panes will ONLY be draggable if there is a back pane that references them. Backpanes also provide a `data-tulito-shovedir` to indicate the direction in which a pane will shove its parent, and a `data-tulito-shovedist="full"` option to cause a back pane to open completely. (This last bit is not very useful at the moment, since back panes themselves cannot be dragged.)
 
-Setting a button's `data-tulito-open` target to a backpane actually triggers the drag of the pane that is the back pane's parent, in the direction identified by its `data-tulito-pos` attribute.
-
-### Buttons
-
-Buttons are simple, but tulito adds to them touch behaviors and touch delays, and attaches `-open` and `-close` behaviors as specified. If an `-open` or `-close` attribute refers to a pane, it will trigger the showing or closing of that pane. If it references a backpane, it triggers the drag of the pane that is the parent of that backpane, in the direction specified by the backpane. See the next section in links for details on this behavior.
-
-### Links
-
-Links behave exactly like buttons, except without applying the default tulito button CSS styles. Both links and buttons, when touched, get an `.active` class added to them, which gets removed after a delay. This provides for an intuitive native-like button delay that lasts after the user's finger has moved out of the way. You should provide both buttons and links with identical `.active` and `:active` entries to allow for this behavior. The power of links is that by simply adding the `data-tulito-class="link"` attribute to anything, you can give it this delayed behavior. Again, buttons do the same, but also incur tulito styling.
+Setting a button's `data-tulito-toggle` target to a backpane actually triggers the drag of the pane that is the back pane's parent, in the direction identified by its `data-tulito-pos` attribute.
 
 ### Shoving
 
 "Shoving" lets you relate the dragging or opening of a content pane to another pane in order to move them together. This usually takes the form of a slight offset of a back pane when the main pane is moved to give the impression of a shove. Shoving is enabled via the attribute `data-tulito-shove` and `data-tulito-shovedir`, but this design is changing between now and "release".
+
+### Buttons
+
+Buttons are simple, but tulito adds to them touch behaviors and touch delays, and attaches `-toggle` behaviors as specified. If a `-toggle` attribute refers to a pane, it will trigger the showing or closing of that pane. If it references a backpane, it triggers the drag of the pane that is the parent of that backpane, in the direction specified by the backpane. See the next section in links for details on this behavior.
+
+The `-toggle` attribute can take a space-delimited list of `data-tulito-id`s. You can also add a `data-tulito-toggledelay` attribute in milliseconds to cause a delay between each toggle.
+
+### Links
+
+Links behave exactly like buttons, except without applying the default tulito button CSS styles. Both links and buttons, when touched, get an `.active` class added to them, which gets removed after a delay. This provides for an intuitive native-like button delay that lasts after the user's finger has moved out of the way. You should provide both buttons and links with identical `.active` and `:active` entries to allow for this behavior. The power of links is that by simply adding the `data-tulito-class="link"` attribute to anything, you can give it this delayed behavior. Again, buttons do the same, but also incur tulito styling.
 
 ### API
 
