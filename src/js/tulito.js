@@ -53,10 +53,11 @@
 			// this gets a little tricky, because we don't want to disable drag input to some elements without
 			// having to be explicit about it. We also want to allow scrolling of explicitly declared scrollable 
 			// elements. So we disable touchmove for everything but input elements and those that have a 
-			// data-tulito-scrollable attribute.
+			// data-tulito-touchdefault attribute. We also allow this attribute to cascade via the init 
+			// cascadeTouchDefault: true option.
 			
 			document.ontouchmove = function(e) {
-				if (e.srcElement.tagName.toLowerCase() !== "input") {
+				if (!e.srcElement.hasAttribute('data-tulito-touchdefault')) {
 					e.preventDefault();
 				}
 			}
@@ -82,6 +83,33 @@
 			for (var i = 0; i < elist.length; ++i) {
 				this.apply(elist[i]);
 			}
+			
+			/* allow a cascade for touchdefault enablement. */
+			var tlist = document.querySelectorAll('[data-tulito-touchdefault="cascade"] *');
+			for (var i = 0; i < tlist.length; ++i) {
+				tlist[i].setAttribute('data-tulito-touchdefault', 'yes');
+			}
+			
+			/* Enable touch default behavior for .scrollable elements.
+			   For now (Safari iOS 7), the very best we can do is use the ScrollFix
+			   technique (https://github.com/joelambert/ScrollFix, 
+			   also see https://github.com/joelambert/ScrollFix/issues/1#issuecomment-2421225})
+			   to offset the scrollTop.
+			*/
+			var slist = document.querySelectorAll('.scrollable');
+			for (var i = 0; i < slist.length; ++i) {
+				new ScrollFix(slist[i]);
+				slist[i].ontouchmove = function(e) { e.stopPropagation() };
+			}
+			/* Be assured, the above (plus the related CSS classes) is the right combination of
+			  factors to get smooth scrolling within panes that themselves get dragged and 
+			  animated.
+			
+			  A consequence of this all is that's it's very difficult to have a pane be both 
+			  scrollable and also swipeable; for example, to close a pane.
+			
+			  This will get easier in the future, I hope.
+			*/
 		};
 		
 		// This is the main API method; init() calls it for each tulito-id in the document, but if
@@ -119,7 +147,11 @@
 		// Experimental, but I don't see a reason to include this. Just use iScroll and register
 		// your scrollables.
 		this._inits['scrollable'] = function (node) {
-			new iScroll(node, { bounce: false });
+				var scroller = new IScroll(node, { eventPassthrough: true, scrollY: true, scrollX: false, snap: true, snapStepX: window.innerWidth - 31, deceleration: 0.008 });
+				setInterval(function() {
+					console.log(scroller);
+					scroller.refresh();
+				}, 2000);
 		};
 			
 		// These are the functional initializers for node behaviors.
@@ -1184,3 +1216,34 @@
 	}
 	
 })(this);
+
+/**
+ * ScrollFix v0.1
+ * http://www.joelambert.co.uk
+ *
+ * Copyright 2011, Joe Lambert.
+ * Free to use under the MIT license.
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+var ScrollFix = function(elem) {
+        // Variables to track inputs
+        var startY, startTopScroll;
+        
+		elem = elem || document.querySelector(elem);
+        
+        // If there is no element, then do nothing        
+        if(!elem)
+                return;
+
+        // Handle the start of interactions
+        elem.addEventListener('touchstart', function(event){
+		     	startY = event.touches[0].pageY;
+                startTopScroll = elem.scrollTop;
+              
+                if(startTopScroll <= 0)
+                        elem.scrollTop = 1;
+				
+                if(startTopScroll + elem.offsetHeight >= elem.scrollHeight)
+                        elem.scrollTop = elem.scrollHeight - elem.offsetHeight - 1;
+        }, false);
+};

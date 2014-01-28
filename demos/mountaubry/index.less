@@ -445,13 +445,43 @@ a, .text a {
 
 
 [data-tulito-id="login"],
-[data-tulito-id="overview"]
+[data-tulito-id="overview"],
+[data-tulito-id="statement"],
+[data-tulito-id="charges"],
+[data-tulito-id="payments"],
+[data-tulito-id="paybill"]
 {
 	text-align:center;
 	z-index: 1;
 	margin: 0;
 	padding: 0;
-	
+}
+
+[data-tulito-id="statement"] {
+	padding-right: 0;
+}
+
+.scrollable {
+	padding-top: 20px;
+	position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+	margin-right: 0 !important;
+	padding-right: 1em;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	max-height: 95%;
+	margin-top: 10%;
+	margin-bottom: 15%;
+	margin-right: 0;
+	-webkit-overflow-scrolling: touch;
+    -webkit-box-flex: 1;
+}
+
+[data-tulito-id="overview"]
+{
 	#pay-button {
 		position: absolute;
 		bottom: 0;
@@ -476,8 +506,9 @@ a, .text a {
 	display: block;
 }
 
-[data-tulito-id="overview"] {
-	padding-top: 12%;
+[data-tulito-id="overview"],
+[data-tulito-id="statement"] {
+	padding-top: 40px;
 }
 
 [data-tulito-class="hidden-pane"] p,
@@ -545,8 +576,12 @@ a, .text a {
 		color: #fff;
 	}
 	.reset-button {
-		float: left;
-		width: 55%;
+		width: 100%;
+		margin-left: 0;
+		margin-right: 0;
+		text-align: center;
+		margin-top: 2%;
+		letter-spacing: 0.1em;
 	}
 	.cancel-button {
 		width: 30%;
@@ -620,6 +655,44 @@ a, .text a {
 		line-height: 1.6em;
 	}
 }
+
+
+/* The balance and charge styling */
+.finance {
+	font-size: 1.1em;
+	.right {
+		float: right;
+		text-align: right;
+	}
+	.bigger {
+		font-size: 1.3em;
+	}
+	.smaller {
+		font-size: 0.9em;
+	}
+	.cents {
+		vertical-align: super;
+		font-size: 0.4em;
+		.bigger & {
+			font-size: 0.6em;
+		}
+	}
+	.vendor {
+		max-width: (@screenWidth * 0.5);
+		text-indent:-2em;
+		padding-left:2em;
+	}
+	div {
+		margin: 0 !important;
+		padding: 0;
+	}
+	.charge {
+		clear: both;
+	}
+	
+}
+
+
 @media screen and (orientation: landscape) {
   .warning {
 	 display: block;

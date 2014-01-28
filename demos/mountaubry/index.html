@@ -67,14 +67,14 @@
 			<!-- this is the overview screen, appears after login -->
 	        <div id="overview" data-tulito-id="overview" data-tulito-class="hidden-pane" data-tulito-pos="up" data-tulito-panegap="full" data-tulito-drag="none">
 				
-				<div class="text">
+				<div class="text finance">
 					
 					<div class="cascade">
-						<span style="font-size: 1.3em; float: right; text-align: right;">
-							<a data-tulito-class="link" class="right">$2210<span style="vertical-align: super; font-size: 0.6em">32</span></a>
+						<span class="right">
+							<a data-tulito-class="link" class="right bigger" data-tulito-toggle="statement">$2210<span  class="cents">32</span></a>
 						</span>
-						<span style="font-size: 1.3em;"><a data-tulito-class="link">Statement Balance</a></span><br/>
-						<span style="font-size: 0.9em;">
+						<span class="bigger"><a data-tulito-class="link" data-tulito-toggle="statement">Statement Balance</a></span><br/>
+						<span class="smaller">
 							Closing date February 12
 						</span>
 						<br/><br/>
@@ -82,45 +82,45 @@
 					
 				  	<div class="cascade">
 						<span style="font-size: 1.1em; float: right; text-align: right;">
-							<a data-tulito-class="link"  class="right">$1012<span style="vertical-align: super; font-size: 0.4em">14</span></a>
+							<a data-tulito-class="link" class="right" data-tulito-toggle="charges">$1012<span class="cents">14</span></a>
 						</span>
-						<span style="font-size: 1.1em;"><a data-tulito-class="link">Recent Charges</a></span><br/>
-						<span style="font-size: 0.9em;">
+						<a data-tulito-class="link" data-tulito-toggle="charges">Recent Charges</a><br/>
+						<span class="smaller">
 							Charges since January 13
 						</span>
 						<br/><br/>
 				  	</div>
 				
 				  	<div class="cascade">
-						<span style="font-size: 1.1em; float: right; text-align: right;">
-							<a data-tulito-class="link"  class="right">$1294<span style="vertical-align: super; font-size: 0.4em">02</span></a>
+						<span class="right">
+							<a data-tulito-class="link" class="right" data-tulito-toggle="payments">$1294<span class="cents">02</span></a>
 						</span>
-						<span style="font-size: 1.1em;"><a data-tulito-class="link">Recent Payments</a></span><br/>
+						<a data-tulito-class="link" data-tulito-toggle="payments">Recent Payments</a><br/>
 						<br/><br/>
 				  	</div>
 				
 					<div class="cascade">
-						<span style="font-size: 1.3em; float: right; text-align: right;">
-							$2492<span style="vertical-align: super; font-size: 0.6em">18</span>
+						<span class="right bigger">
+							$2492<span class="cents">18</span>
 						</span>
-						<span style="font-size: 1.3em;">Outstanding Balance</span><br/>
+						<span class="bigger">Outstanding Balance</span><br/>
 						<br/><br/>
 					</div>
 
 					<div class="cascade">
-						<span style="font-size: 1.1em; float: right; text-align: right;">
-							$507<span style="vertical-align: super; font-size: 0.4em">86</span>
+						<span class="right">
+							$507<span class="cents">86</span>
 						</span>
-						<span style="font-size: 1.1em;">Available Credit</span><br/>
+						Available Credit<br/>
 						<br/><br/>
 					</div>
 
 					<div class="cascade">
-						<span style="font-size: 1.1em; float: right; text-align: right;">
-							$280<span style="vertical-align: super; font-size: 0.4em">49</span>
+						<span class="right">
+							$280<span class="cents">49</span>
 						</span>
-						<span style="font-size: 1.1em;">Payment Due</span><br/>
-						<span style="font-size: 0.9em;">
+						<span>Payment Due</span><br/>
+						<span class="smaller">
 							Due March 1
 						</span>
 						<br/><br/>
@@ -130,8 +130,158 @@
 				
 				<div data-tulito-class="button" id="pay-button" class="big on bottom">Pay My Bill</div>
 				
-			</div>
+			</div> <!-- end overview -->
 		
+			<!-- statement details-->
+	        <div id="statement" data-tulito-id="statement" data-tulito-class="hidden-pane" data-tulito-pos="right" data-tulito-panegap="full" data-tulito-drag="none">
+
+				<div class="text finance scrollable">
+					<div>
+						<span class="right bigger">
+							$2210<span  class="cents">32</span>
+						</span>
+						<span class="bigger">Current Statement</span><br/>
+						<span class="smaller">
+							1/12/14 - 2/12/14
+						</span>
+						<br/><br/>
+					</div>
+					
+					<b>Charges for 1/16/14</b><br/>
+					<hr/>
+					
+					<div class="charge">
+						<span class="right">
+							<span class="right">$37<span  class="cents">45</span></span>
+						</span>
+						<div class="vendor">SHOPPERS #14 CINIA MA</div>
+					</div>
+					<hr/>
+					
+					<div class="charge">
+						<span class="right">
+							<span class="right">$208<span  class="cents">78</span></span>
+						</span>
+						<div class="vendor">FLIXIC CATOS CA</div>
+					</div>
+					<hr/>
+					
+					<div class="charge">
+						<span class="right">
+							<span class="right">$103<span  class="cents">24</span></span>
+						</span>
+						<div class="vendor">TIRE CENTER 44083 54 TARTEN MA</div>
+					</div>
+					<hr/>
+					
+					<div class="charge">
+						<span class="right">
+							<span class="right">$27<span  class="cents">99</span></span>
+						</span>
+						<div class="vendor">JTPK 877-555-2231 FL</div>
+					</div>
+					<hr/>
+					<br/>
+					
+					<b>Charges for 1/21/14</b><br/>
+					<hr/>
+					
+					<div class="charge">
+						<span class="right">
+							<span class="right">$46<span  class="cents">64</span></span>
+						</span>
+						<div class="vendor">SUPERMERCADO FELIZ  WATERS MA</div>
+					</div>
+					<hr/>
+					<br/>
+					
+					<b>Charges for 1/22/14</b><br/>
+					<hr/>
+					
+					<div class="charge">
+						<span class="right">
+							<span class="right">$193<span  class="cents">20</span></span>
+						</span>
+						<div class="vendor">FLIXIC CATOS CA</div>
+					</div>
+					<hr/>
+					
+					<div class="charge">
+						<span class="right">
+							<span class="right">$114<span  class="cents">24</span></span>
+						</span>
+						<div class="vendor">TIRE CENTER 44083 54 TARTEN MA</div>
+					</div>
+					<hr/>
+					
+					<div class="charge">
+						<span class="right">
+							<span class="right">$27<span  class="cents">99</span></span>
+						</span>
+						<div class="vendor">JTPK 877-555-2231 FL</div>
+					</div>
+					<hr/>
+					<br/>
+					
+					<b>Charges for 1/26/14</b><br/>
+					<hr/>
+
+					<div class="charge">
+						<span class="right">
+							<span class="right">$15<span  class="cents">21</span></span>
+						</span>
+						<div class="vendor">RELIGITO TEXILES 23-11 TEMPLAR NY</div>
+					</div>
+					<hr/>
+
+					<div class="charge">
+						<span class="right">
+							<span class="right">$54<span  class="cents">10</span></span>
+						</span>
+						<div class="vendor">UTILITY SERVICES  TARTEN MA</div>
+					</div>
+					<hr/>
+
+					<div class="charge">
+						<span class="right">
+							<span class="right">$27<span  class="cents">99</span></span>
+						</span>
+						<div class="vendor">JAMIE STANDARDS  FAMILIAL MN</div>
+					</div>
+					<hr/>
+					<br/>
+					
+					<b>Charges for 1/26/14</b><br/>
+					<hr/>
+
+					<div class="charge">
+						<span class="right">
+							<span class="right">$15<span  class="cents">21</span></span>
+						</span>
+						<div class="vendor">RELIGITO TEXILES 23-11 TEMPLAR NY</div>
+					</div>
+					<hr/>
+
+					<div class="charge">
+						<span class="right">
+							<span class="right">$54<span  class="cents">10</span></span>
+						</span>
+						<div class="vendor">UTILITY SERVICES  TARTEN MA</div>
+					</div>
+					<hr/>
+
+					<div class="charge">
+						<span class="right">
+							<span class="right">$27<span  class="cents">99</span></span>
+						</span>
+						<div class="vendor">JAMIE STANDARDS  FAMILIAL MN</div>
+					</div>
+					<hr/>
+					<br/>
+				</div>
+				
+			</div>
+			
 			<!-- the loading spinner -->
 			<div class="loader">
 				<i class="fa fa-spinner our-spin"></i>
@@ -143,7 +293,7 @@
 		<!-- back side menu -->
 		<div id="menu-pane" data-tulito-id="menu-pane" data-tulito-class="back-pane" data-tulito-parentdrag="left" data-tulito-parent="main" data-tulito-shovedir="left">
 			<ul>
-				<li data-tulito-class="link" id="account-summary-li"><p>Account Summary</p>
+				<li data-tulito-class="link" id="account-summary-li" data-tulito-toggle="menu-pane"><p>Account Summary</p>
 					<p class="small">Balance, Recent Charges, Pay Your Bill</p>
 				</li>
 				<li data-tulito-class="link" id="company-news-li"><p>Company News</p>
@@ -210,8 +360,8 @@
 			<div class="text">
 				To reset your password, please enter your email address below. We will send you a link via email to safely change your password.
 				<input type="text" placeholder="Email"/>
-				<div data-tulito-class="button" class="reset-button small on">Reset Password</div>
-				<div data-tulito-class="button" class="cancel-button small on" data-tulito-toggle="forgot-pane">Cancel</div>
+				<div data-tulito-class="button" class="reset-button on">Reset Password</div>
+				<!-- <div data-tulito-class="button" class="cancel-button small on" data-tulito-toggle="forgot-pane">Cancel</div> -->
 			 </div>
 		</div>
 		

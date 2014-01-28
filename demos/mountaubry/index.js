@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	/* Initialize tulito. */
 	tulito.init({
 		noReorient: true,
-		openedPaneGap: 100,
+		openedPaneGap: 120,
 		shovedPaneGap: 60
 	});
 
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		var showels = pane.querySelectorAll('.cascade');
 		var time = 0;
 		for (var i = 0; i < showels.length; ++i) {
-			time += 100;
+			time += 150;
 			setctimer(showels[i], time);			
 		}
 	};
@@ -130,7 +130,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	var panes = document.querySelectorAll('[data-tulito-class="hidden-pane"]');
 	for (var i = 0; i < panes.length; ++i) {
 		panes[i].addEventListener('transitionend', function(e) {
-			console.log(e.srcElement);
 			if (e.srcElement.getAttribute('data-tulito-class') === 'hidden-pane' && e.propertyName.match(/-transform$/)) {
 				cascade(e.srcElement);
 			}
