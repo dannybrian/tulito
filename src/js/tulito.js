@@ -110,6 +110,14 @@
 			
 			  This will get easier in the future, I hope.
 			*/
+			
+			var dlist = document.querySelectorAll('[data-tulito-drag="never"]');
+			for (var i = 0; i < dlist.length; ++i) {
+				dlist[i].ontouchmove = function(e) {
+					e.preventDefault();
+					e.stopPropagation();
+				};
+			}
 		};
 		
 		// This is the main API method; init() calls it for each tulito-id in the document, but if
@@ -204,6 +212,9 @@
 
 			var dragging = node.getAttribute('data-tulito-drag');
 			if (dragging === 'none') { return; }
+			// Note that data-tulito-drag='none' will still let the drag propagate to parent panes.
+			// You can disable that with data-tulito-drag='never'. (It turns off propagation, see above.)
+			if (dragging === 'never') { return; }
 			
 			// Disable transitions when a drag begins, and show the proper back pane.
 			Hammer(node).on("dragstart", function(e) {
@@ -299,6 +310,9 @@
 			
 			var dragging = node.getAttribute('data-tulito-drag');
 			if (dragging === 'none') { return; }
+			// Note that data-tulito-drag='none' will still let the drag propagate to parent panes.
+			// You can disable that with data-tulito-drag='never'. (It turns off propagation, see above.)
+			if (dragging === 'never') { return; }
 			
 			// Hidden panes can be dragged and swiped, but this happens only to the inverse
 			// of their position. They are much simpler than panes, since they only get
@@ -459,14 +473,30 @@
 					var delayms = node.getAttribute('data-tulito-toggledelay');
 					var thisdelay = 0;
 					node.getAttribute('data-tulito-toggle').split(/\s+/).forEach(function(key) {
-						toggleit(document.querySelector('[data-tulito-id="' + key + '"]'), e, thisdelay);
+						var tulitoid = key.split(':');
+						if (tulitoid[1]) { // includes a class for the selector
+							toggleit(document.querySelector('[data-tulito-id="' + key + '"].' + tulitoid[1]), e, thisdelay);
+						}
+						else
+						{
+							toggleit(document.querySelector('[data-tulito-id="' + key + '"]'), e, thisdelay);
+							
+						}
 						thisdelay += delayms;
 					});
 				}
 				else
 				{
 					node.getAttribute('data-tulito-toggle').split(/\s+/).forEach(function(key) {
-						self._togglePane(document.querySelector('[data-tulito-id="' + key + '"]'), e);
+						var tulitoid = key.split(':');
+						if (tulitoid[1]) { // includes a class for the selector
+							self._togglePane(document.querySelector('[data-tulito-id="' + tulitoid[0] + '"].' + tulitoid[1]), e);
+						}
+						else
+						{
+							self._togglePane(document.querySelector('[data-tulito-id="' + key + '"]'), e);
+							
+						}
 					});
 				}
 			}
@@ -509,7 +539,7 @@
 
 		this._hasClass = function( node, cname ) {
 			var regex = new RegExp('\\s*\\b' + cname + '\\b', 'g');
-			return node.className.match(regex);
+			return regex.test(node.className);
 		}
 		
 		this._removeClass = function( node, cname ) {
@@ -866,6 +896,9 @@
 						self._addClass(ncache._backpane, 'shovedleft');
 					}
 					else if (ncache._shovedir === 'left') {
+						/* FIXME: if they dragged it all the way, we need to toggle 
+						   the showing ourselves (since the transition won't happen and 
+						   transitionend won't fire) */
 						self._translateEnd(ncache._backpane, self.options.shovedPaneGap, 0, 0 );
 						self._addClass(ncache._backpane, 'shovedright');
 					}
