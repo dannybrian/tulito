@@ -74,7 +74,7 @@ You enable tulito behaviors by attaching `data-tulito-*` attributes to your HTML
 
 ### Panes
 
-Panes are bits of content, like pages. They are displayed initially, and can be dragged out of the way temporarily to reveal a backpane.  Backpanes (see below) set a `data-tulito-parent` attribute to identify the pane ID to which they "belong" and push out of the way when they appear. The backpane shown on a drag will also depend on the backpane's `data-tulito-parentdrag` attribute, if multiple backpanes exist. The attribute `data-tulito-drag="none"` can be used to disable the default drag behaviors of any pane, including hidden. A less common attribute `data-tulito-allowchilddrags="yes"` (on ancestors) allows descendant elements to drag the pane. This is useful for nesting several pane behaviors; for example, a collection of hidden panes used to transition content while having back panes behind that collection. See the demos for examples.
+Panes are bits of content, like pages. They are displayed initially, and can be dragged out of the way temporarily to reveal a backpane.  Backpanes (see below) set a `data-tulito-parent` attribute to identify the pane ID to which they "belong" and push out of the way when they appear. The backpane shown on a drag will also depend on the backpane's `data-tulito-parentdrag` attribute, if multiple backpanes exist. The attribute `data-tulito-drag="none"` can be used to disable the default drag behaviors of any pane, including hidden. A less common attribute `data-tulito-allowchilddrags="yes"` (on ancestors) allows descendant elements to drag the pane. This is useful for nesting several pane behaviors; for example, a collection of hidden panes used to transition content while having back panes behind that collection. See the demos for examples. Lastly, if you want to absolutely prevent any kind of drags occurring for a given pane, you can use `data-tulito-drag="never"`. Just be aware that this means you'll need other ways to manipulate the panes, such as close buttons.
 
 Default behavior for all panes (including hidden) is to disable controls — buttons, input elements, scrollers — for non-focused panes when a pane is open. You can disable this behavior with the attribute `data-tulito-controls="leave"`.
 
@@ -98,7 +98,7 @@ Setting a button's `data-tulito-toggle` target to a backpane actually triggers t
 
 Buttons are simple, but tulito adds to them touch behaviors and touch delays, and attaches `-toggle` behaviors as specified. If a `-toggle` attribute refers to a pane, it will trigger the showing or closing of that pane. If it references a backpane, it triggers the drag of the pane that is the parent of that backpane, in the direction specified by the backpane. See the next section in links for details on this behavior.
 
-The `-toggle` attribute can take a space-delimited list of `data-tulito-id`s. You can also add a `data-tulito-toggledelay` attribute in milliseconds to cause a delay between each toggle.
+The `-toggle` attribute can take a space-delimited list of `data-tulito-id`s. If you put colon after an ID followed by a class, only elements with those classes will be toggled (e.g. `data-tulito-id="thanks-pane:opened"`). You can also add a `data-tulito-toggledelay` attribute in milliseconds to cause a delay between each toggle.
 
 ### Links
 
