@@ -297,7 +297,7 @@ hr {
 	min-height: 100px;
 }
 
-.cascade {
+.cascade:not(.account) {
 	margin: 0 !important;
 	padding: 0;
 	transition: opacity @cascadeSpeed, -webkit-transform @cascadeSpeed;
@@ -449,16 +449,13 @@ a, .text a {
 [data-tulito-id="statement"],
 [data-tulito-id="charges"],
 [data-tulito-id="payments"],
-[data-tulito-id="paybill"]
+[data-tulito-id="paybill"],
+[data-tulito-id="news"]
 {
 	text-align:center;
 	z-index: 1;
 	margin: 0;
 	padding: 0;
-}
-
-[data-tulito-id="statement"] {
-	padding-right: 0;
 }
 
 .scrollable {
@@ -488,7 +485,7 @@ a, .text a {
 		text-align: center;
 		margin-top: 6px;
 		background-color: #5491a0;
-		font-size: 18px;
+		font-size: 19px;
 		margin-right: 5%;
 		margin-left: 5%;
 		margin-bottom: 1%;
@@ -507,8 +504,18 @@ a, .text a {
 }
 
 [data-tulito-id="overview"],
-[data-tulito-id="statement"] {
-	padding-top: 40px;
+[data-tulito-id="statement"],
+[data-tulito-id="payments"],
+[data-tulito-id="news"] {
+	padding-top: 38px;
+}
+
+[data-tulito-id="statement"],
+[data-tulito-id="payments"],
+[data-tulito-id="news"] {
+	.text {
+		margin-left: 14% !important;
+	}
 }
 
 [data-tulito-class="hidden-pane"] p,
@@ -595,6 +602,92 @@ a, .text a {
 	}
 }
 
+[data-tulito-id="paybill-pane"] {
+	padding: 1.4em;
+	padding-top: 2em;
+	background-color: #457a87;
+	div {
+		color: #fff;
+	}
+	.instruct {
+		font-size: 1.2em;
+	}
+	.account {
+		width: 100%;
+		text-align: center;
+		color: #222;
+		padding: 0.6em;
+		background-color: rgba(240,240,240,0.8);
+		font-size: 1.1em;
+		font-weight: 500;
+		margin-right: 0;
+		margin-left: 0;
+		&.active {
+			color: #444;
+			background-color: rgba(255,255,255,0.8);
+		}
+		&:active {
+			color: #444;
+			background-color: rgba(255,255,255,0.8);
+		}
+		
+	}
+	
+	.choose-account, .choose-amount {
+		position: relative;
+		.instruct {
+			transition: opacity @cascadeSpeed, -webkit-transform @cascadeSpeed;
+			opacity: 0;
+			&.cascade {
+				&.shown {
+					opacity: 1;
+				}
+			}
+		}
+		.account, .amount {
+			position: absolute;
+			top: 0;
+			opacity: 0;
+			transition: opacity @cascadeSpeed, -webkit-transform @cascadeSpeed;
+			&.option1 {
+				-webkit-transform: translateY(45px);
+			}
+			&.option2 {
+				-webkit-transform: translateY(110px);
+			}
+			&.cascade {
+				&.shown {
+					opacity: 1;
+				}
+				&.option1.shown {
+					-webkit-transform: translateY(55px);
+				}
+				&.option2.shown {
+					-webkit-transform: translateY(120px);
+				}
+			}
+			&.selected {
+				opacity: 1;
+				-webkit-transform: translateY(0);
+			}
+		}
+	}
+	
+	.tclose {
+		top: -22px;
+		left: auto;
+		right: -20px;
+		color: rgba(200,200,200,0.7);
+		&:active {
+			background-color: #777;
+		}
+		&.active {
+			background-color: #777;
+		}
+	}
+	
+}
+
 [data-tulito-id="info-pane"] {
 	background-color: #457a87;
 	color: #000;
@@ -656,6 +749,19 @@ a, .text a {
 	}
 }
 
+.tclose {
+	color: #999;
+	left: -22px;
+	top: 18px;
+	font-size: 2em !important;
+	z-index: 10;
+	&:active {
+		background-color: #eee;
+	}
+	&.active {
+		background-color: #eee;
+	}
+}
 
 /* The balance and charge styling */
 .finance {
@@ -689,7 +795,6 @@ a, .text a {
 	.charge {
 		clear: both;
 	}
-	
 }
 
 

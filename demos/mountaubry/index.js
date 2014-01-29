@@ -109,6 +109,26 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	});
 	
+	/* Manually handle the payment screen selections. */
+	var options = document.querySelectorAll('.option');
+	for (var i = 0; i < options.length; ++i) {
+		Hammer(options[i]).on("tap", function(e) {
+			var parent = e.srcElement.parentNode;
+			tulito._removeClass(parent.querySelector('.instruct'), 'shown');
+			var aoptions = parent.querySelectorAll('.option');
+			for (var i = 0; i < aoptions.length; ++i) {
+				if (e.srcElement === options[i]) {
+					tulito._addClass(e.srcElement, 'selected');
+					tulito._removeClass(e.srcElement, 'shown');
+				}
+				else
+				{
+					tulito._removeClass(aoptions[i], 'shown');
+				}
+			}
+		});
+	}
+	
 	/* This is our simple cascade implementation. */
 	var setctimer = function (el, time) {
 		setTimeout(function() {
@@ -120,18 +140,32 @@ document.addEventListener('DOMContentLoaded', function() {
 		var showels = pane.querySelectorAll('.cascade');
 		var time = 0;
 		for (var i = 0; i < showels.length; ++i) {
-			time += 150;
+			time += 100;
 			setctimer(showels[i], time);			
 		}
 	};
 	
+	var uncascade = function (pane) {
+		var showels = pane.querySelectorAll('.cascade');
+		for (var i = 0; i < showels.length; ++i) {
+			tulito._removeClass(showels[i], 'shown');
+			tulito._removeClass(showels[i], 'selected');			
+		}
+	};
 	/* Cascade any needed contents (those with a .cascade class) when a hidden pane finishes
 	   its transition. */
 	var panes = document.querySelectorAll('[data-tulito-class="hidden-pane"]');
 	for (var i = 0; i < panes.length; ++i) {
 		panes[i].addEventListener('transitionend', function(e) {
 			if (e.srcElement.getAttribute('data-tulito-class') === 'hidden-pane' && e.propertyName.match(/-transform$/)) {
-				cascade(e.srcElement);
+				if (tulito._hasClass(e.srcElement, 'opened')) {
+					cascade(e.srcElement);
+				}
+				// and reset stuff when it closes.
+				else
+				{
+					uncascade(e.srcElement);
+				}
 			}
 		}, false);
 	}
