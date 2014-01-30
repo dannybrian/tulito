@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	var login = document.querySelector('#login');
 	var infopane = document.querySelector('[data-tulito-id="info-pane"]');
 	var menu = document.querySelector('#menu-pane');
+	var paypane = document.querySelector('#paybill-pane');
 	
 	/* Listen for touch events */
 	Hammer(document.querySelector('#login-button')).on("tap", function(e) {
@@ -109,23 +110,37 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	});
 	
+	var setptimer = function (el, time) {
+		setTimeout(function() {
+			tulito._addClass(el, 'shown');				
+		}, time);
+		
+	}
+	
 	/* Manually handle the payment screen selections. */
-	var options = document.querySelectorAll('.option');
+	var options = paypane.querySelectorAll('.option');
 	for (var i = 0; i < options.length; ++i) {
 		Hammer(options[i]).on("tap", function(e) {
 			var parent = e.srcElement.parentNode;
 			tulito._removeClass(parent.querySelector('.instruct'), 'shown');
 			var aoptions = parent.querySelectorAll('.option');
-			for (var i = 0; i < aoptions.length; ++i) {
-				if (e.srcElement === options[i]) {
+			for (var ai = 0; ai < aoptions.length; ++ai) {
+				if (e.srcElement === aoptions[ai]) {
 					tulito._addClass(e.srcElement, 'selected');
 					tulito._removeClass(e.srcElement, 'shown');
 				}
 				else
 				{
-					tulito._removeClass(aoptions[i], 'shown');
+					tulito._removeClass(aoptions[ai], 'shown');
 				}
 			}
+			var nextblock = parent.getAttribute('data-nextblock');
+			var nbdivs = document.querySelectorAll('[data-tulito-id="' + nextblock + '"] > div');
+			for (var ni = 0; ni < nbdivs.length; ++ni) {
+				tulito._addClass(nbdivs[ni], 'cascade');
+				tulito._addClass(nbdivs[ni], 'shown');
+			}
+			
 		});
 	}
 	
@@ -169,6 +184,22 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		}, false);
 	}
+	
+	/* The payment screen is *extra-fancy*, and we need to clean up the manual cascades there
+	   on close. */
+	paypane.addEventListener('transitionend', function(e) {
+		console.log('event');
+		setTimeout(function() {
+			
+			if (!tulito._hasClass(paypane, 'opened')) {
+				console.log('closed');
+				var tmp_cascades = paypane.querySelectorAll('.choose-amount .instruct, .choose-amount .amount.cascade');
+				for (var i = 0; i < tmp_cascades.length; ++i) {
+					tulito._removeClass(tmp_cascades[i], 'cascade');
+				}
+			}
+		}, 1); // give the uncascade a moment to happen first
+	}, false);
 	
 	/* Cascade the main page content */
 	setTimeout(function() {

@@ -604,7 +604,7 @@ a, .text a {
 
 [data-tulito-id="paybill-pane"] {
 	padding: 1.4em;
-	padding-top: 2em;
+	padding-top: 3em;
 	background-color: #457a87;
 	div {
 		color: #fff;
@@ -612,7 +612,7 @@ a, .text a {
 	.instruct {
 		font-size: 1.2em;
 	}
-	.account {
+	.account, .amount {
 		width: 100%;
 		text-align: center;
 		color: #222;
@@ -648,6 +648,7 @@ a, .text a {
 			position: absolute;
 			top: 0;
 			opacity: 0;
+			pointer-events: none;
 			transition: opacity @cascadeSpeed, -webkit-transform @cascadeSpeed;
 			&.option1 {
 				-webkit-transform: translateY(45px);
@@ -655,15 +656,22 @@ a, .text a {
 			&.option2 {
 				-webkit-transform: translateY(110px);
 			}
+			&.option3 {
+				-webkit-transform: translateY(175px);
+			}
 			&.cascade {
 				&.shown {
 					opacity: 1;
+					pointer-events: auto;
 				}
 				&.option1.shown {
 					-webkit-transform: translateY(55px);
 				}
 				&.option2.shown {
 					-webkit-transform: translateY(120px);
+				}
+				&.option3.shown {
+					-webkit-transform: translateY(185px);
 				}
 			}
 			&.selected {
