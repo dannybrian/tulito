@@ -48,6 +48,9 @@ Things tulito does not give you:
 - An SoC framework (like http://knockoutjs.com/)
 - Templating (like http://ejohn.org/blog/javascript-micro-templating/)
 - Routing (like http://sammyjs.org/)
+- DOM manipulation (like jQuery)
+
+(NOTE: the lack of dependencies (other than LESS) in tulito is not a statement about other libraries. I just didn't want to force any more on potential implementors than necessary. Face it -- we (Web developers) are a finicky group. Better to offend as few as possible.)
 
 How?
 ----
