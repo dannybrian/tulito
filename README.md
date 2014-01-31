@@ -50,7 +50,7 @@ Things tulito does not give you:
 - Routing (like http://sammyjs.org/)
 - DOM manipulation (like jQuery)
 
-(NOTE: the lack of dependencies (other than LESS) in tulito is not a statement about other libraries. I just didn't want to force any more on potential implementors than necessary. Face it -- we (Web developers) are a finicky group. Better to offend as few as possible.)
+(NOTE: the lack of dependencies (other than Hammer.js) in tulito is not a statement about other libraries. I just didn't want to force any more on potential implementors than necessary. Face it -- we (Web developers) are a finicky group. Better to offend as few as possible.)
 
 How?
 ----
