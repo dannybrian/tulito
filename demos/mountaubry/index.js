@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	/* Cache some DOM references */
-	var loader = document.querySelector('.loader');
 	var main = document.querySelector('[data-tulito-id="main"]');
+	var loader = document.querySelector('[data-tulito-id="main"] > .loader');
 	var titlebar = document.querySelector('.title-bar');
 	var menubutton = document.querySelector('#menu-button');
 	var overview = document.querySelector('#overview');
@@ -188,18 +188,39 @@ document.addEventListener('DOMContentLoaded', function() {
 	/* The payment screen is *extra-fancy*, and we need to clean up the manual cascades there
 	   on close. */
 	paypane.addEventListener('transitionend', function(e) {
-		console.log('event');
 		setTimeout(function() {
-			
 			if (!tulito._hasClass(paypane, 'opened')) {
-				console.log('closed');
-				var tmp_cascades = paypane.querySelectorAll('.choose-amount .instruct, .choose-amount .amount.cascade');
+				var tmp_cascades = paypane.querySelectorAll('.choose-amount .instruct, .choose-amount .amount.cascade, .choose-date .instruct, .choose-date .date.cascade, #submitpay-button.cascade');
 				for (var i = 0; i < tmp_cascades.length; ++i) {
 					tulito._removeClass(tmp_cascades[i], 'cascade');
 				}
 			}
 		}, 1); // give the uncascade a moment to happen first
 	}, false);
+	
+	var paybutton = paypane.querySelector('[data-tulito-id="submitpay-button"]')
+	var payloader = paypane.querySelector('.loader');
+	Hammer(paybutton).on("tap", function(e) {
+		tulito._addClass(loader, 'full shown');
+		setTimeout(function() {
+			tulito._addClass(loader, 'opened');			
+		}, 1);
+		setTimeout(function() {
+			tulito._togglePane(document.querySelector('[data-tulito-id="thankyou-pane"]'));
+			tulito._removeClass(loader, 'opened');
+			setTimeout(function() {
+				tulito._togglePane(paypane);
+			}, 1000);
+			setTimeout(function() {
+				tulito._togglePane(document.querySelector('[data-tulito-id="thankyou-pane"]'));
+				setTimeout(function() {
+					tulito._removeClass(loader, 'shown');
+					tulito._removeClass(loader, 'full');					
+				}, 1000)
+			}, 2000);
+		}, 4000);
+	});
+	
 	
 	/* Cascade the main page content */
 	setTimeout(function() {

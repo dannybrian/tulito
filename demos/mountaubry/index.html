@@ -11,11 +11,24 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 		<meta name="apple-touch-fullscreen" content="yes">
 
+		<!-- homescreen icons -->
+		<link rel="apple-touch-icon-precomposed" href="icon-57.png" />
+	    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="icon-72.png" />
+	    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="icon-114.png" />
+	    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="icon-144.png" />
+	
+		<!-- splashscreens -->
+		<!-- iPhone (Retina), real size is 640x960 -->
+		<link href="splash-640x960.png" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image">
+		<!-- iPhone 5, real size is 640x1136 -->
+		<link href="splash-640x1136.png"  media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image">
+		
+		
 		<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 		<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,600,200italic,400italic,600italic' rel='stylesheet' type='text/css'>
 		
 		<script type="text/javascript">
-			less = { env: "development" }
+			less = { env: "production" }
 		</script>
 		<link rel="stylesheet/less" type="text/css" href="../../src/css/tulito.less" />
 		<link rel="stylesheet/less" type="text/css" href="index.less" />
@@ -364,47 +377,72 @@
 				<div class="text finance">
 					
 					<div class="choose-account" data-nextblock="choose-amount" style="z-index: 5">
-						<div class="cascade instruct">Choose the account to use to pay your bill.<br/></div>
+						<div class="cascade instruct">Choose the account to use:<br/></div>
 						<div class="cascade option account option1" data-tulito-class="button">
 							Wells Fargo Checking<br/>
 								(ending in 0937)<br/>
+							<i class="fa fa-check"> </i>
 					  	</div>
 						<div class="cascade option account option2" data-tulito-class="button">
 							Chase Mortgage<br/>
 								(ending in 330)<br/>
+							<i class="fa fa-check"> </i>
 					  	</div>
 					</div>
 					
 				</div>
 				
-				<div class="text finance" style="position: relative; top: 20px;">
+				<div class="text finance" style="position: relative; top: 50px;">
 					
-					<div data-tulito-id="choose-amount" class="choose-amount" style="z-index: 4">
-						<div class="instruct">Choose an amount to pay.<br/></div>
+					<div data-tulito-id="choose-amount" data-nextblock="choose-date"  class="choose-amount" style="z-index: 4">
+						<div class="instruct">Choose an amount to pay:<br/></div>
 						<div class="option amount option1" data-tulito-class="button">
 							$280<span class="cents">49</span><br/>
 								(minimum due)<br/>
+							<i class="fa fa-check"> </i>
 					  	</div>
-							<div class="option amount option2" data-tulito-class="button">
+						<div class="option amount option2" data-tulito-class="button">
 							$2210<span class="cents">32</span><br/>
 								(current statement)<br/>
-						  	</div>
+							<i class="fa fa-check"> </i>
+						</div>
 						<div class="option amount option3" data-tulito-class="button">
 							$2492<span class="cents">18</span><br/>
 								(full balance)<br/>
+								<i class="fa fa-check"> </i>
 					  	</div>
 					</div>
 					
 				</div>
 				
+				<div class="text finance" style="position: relative; top: 100px;">
+					
+					<div data-tulito-id="choose-date" data-nextblock="submitplay"  class="choose-date" style="z-index: 3">
+						<div class="instruct">Choose the payment date:<br/></div>
+						<div class="option date option1" data-tulito-class="button">
+							Today<br/>
+								(February 25)<br/>
+							<i class="fa fa-check"> </i>
+					  	</div>
+							<div class="option date option2" data-tulito-class="button">
+						Due Date<br/>
+							(March 1)<br/>
+							<i class="fa fa-check"> </i>
+					  	</div>
+				  	</div>
+				</div>
 				
-
+				<div data-tulito-id="submitplay">
+					<div data-tulito-class="button" data-tulito-id="submitpay-button" id="submitpay-button" class="big on bottom">Submit Payment</div>
+				</div>
+				
 			</div>
 			
 			<!-- the loading spinner -->
 			<div class="loader">
 				<i class="fa fa-spinner our-spin"></i>
 			</div>
+			
 			
 		</div> <!-- end main pane -->
 		
@@ -483,19 +521,23 @@
 			 </div>
 		</div>
 		
+		<div data-tulito-id="thankyou-pane" data-tulito-class="hidden-pane" data-tulito-pos="down" data-tulito-panegap="full">
+			<p class="thankyou">Thank you for your payment.</p>
+		</div>
+		
 		<!-- the alert/info screen -->
 		<div data-tulito-id="info-pane" data-tulito-class="hidden-pane" data-tulito-pos="left" >
 			<p class="info">This app can remember your username to make logging in a faster process. However, for security reasons, the Mount Aubry app will never store your password.</p>
 			<div data-tulito-class="button" data-tulito-toggle="info-pane">OK</div>
 		</div>
-		
+				
 		<div class="warning">
 			<p>This app requires your device to be in a vertical orientation.<br/><br/>Please rotate your device.</p>
 		</div>
 		
         <script type="text/javascript" src="../../src/js/hammer.min.js"></script>
-		<script type="text/javascript" src="../../src/js/tulito.js"></script>
-		<script type="text/javascript" src="index.js"></script>
+		<script type="text/javascript" src="../../src/js/tulito.min.js"></script>
+		<script type="text/javascript" src="index.min.js"></script>
 
     </body>
 </html>

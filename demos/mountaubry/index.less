@@ -558,10 +558,16 @@ a, .text a {
 		opacity: 1;
 		line-height: 16px;
 	}
+	&.full {
+		z-index: 2000;
+	}
 	&.shown {
 		display: inline-block;
 		&.opened {
 			opacity: 0.8;
+			&.full {
+				opacity: 0.5;
+			}
 		}
 	}
 }
@@ -612,13 +618,13 @@ a, .text a {
 	.instruct {
 		font-size: 1.2em;
 	}
-	.account, .amount {
+	.account, .amount, .date {
 		width: 100%;
 		text-align: center;
 		color: #222;
 		padding: 0.6em;
 		background-color: rgba(240,240,240,0.8);
-		font-size: 1.1em;
+		font-size: 1.2em;
 		font-weight: 500;
 		margin-right: 0;
 		margin-left: 0;
@@ -630,10 +636,25 @@ a, .text a {
 			color: #444;
 			background-color: rgba(255,255,255,0.8);
 		}
-		
+		.fa-check {
+			display: none;
+			font-size: 2em;
+			position: absolute;
+			right: 1px;
+			top: 13px;
+			color: #3c723b;
+		}
+		&.selected {
+			color: #fff;
+			background-color: rgba(255,255,255,0.3);
+			font-weight: 600;
+			.fa-check {
+				display: block;
+			}
+		}
 	}
 	
-	.choose-account, .choose-amount {
+	.choose-account, .choose-amount, .choose-date {
 		position: relative;
 		.instruct {
 			transition: opacity @cascadeSpeed, -webkit-transform @cascadeSpeed;
@@ -644,20 +665,20 @@ a, .text a {
 				}
 			}
 		}
-		.account, .amount {
+		.account, .amount, .date {
 			position: absolute;
 			top: 0;
 			opacity: 0;
 			pointer-events: none;
 			transition: opacity @cascadeSpeed, -webkit-transform @cascadeSpeed;
 			&.option1 {
-				-webkit-transform: translateY(45px);
+				-webkit-transform: translateY(35px);
 			}
 			&.option2 {
-				-webkit-transform: translateY(110px);
+				-webkit-transform: translateY(115px);
 			}
 			&.option3 {
-				-webkit-transform: translateY(175px);
+				-webkit-transform: translateY(195px);
 			}
 			&.cascade {
 				&.shown {
@@ -665,13 +686,13 @@ a, .text a {
 					pointer-events: auto;
 				}
 				&.option1.shown {
-					-webkit-transform: translateY(55px);
+					-webkit-transform: translateY(45px);
 				}
 				&.option2.shown {
-					-webkit-transform: translateY(120px);
+					-webkit-transform: translateY(125px);
 				}
 				&.option3.shown {
-					-webkit-transform: translateY(185px);
+					-webkit-transform: translateY(205px);
 				}
 			}
 			&.selected {
@@ -694,6 +715,57 @@ a, .text a {
 		}
 	}
 	
+	#submitpay-button {
+		position: absolute;
+		pointer-events: none;
+		opacity: 0;
+		bottom: 6%;
+		height: 50px;
+		text-align: center;
+		margin-top: 6px;
+		background-color: #3c723b;
+		font-size: 19px;
+		line-height: 50px;
+		text-align: middle;
+		width: 80%;
+		&.active {
+			background-color: #669665;
+		}
+		&:active {
+			background-color: #669665;
+		}
+		transition: opacity @cascadeSpeed, -webkit-transform @cascadeSpeed;
+		-webkit-transform: translateY(20px);
+		&.cascade {
+			&.shown {
+				opacity: 1;
+				pointer-events: auto;
+				-webkit-transform: translateY(0);
+			}
+		}
+	}
+	
+	.loader {
+		z-index: 1000;
+	}
+}
+
+[data-tulito-id="thankyou-pane"] {
+	background-color: #457a87;
+	p.thankyou {
+		position: absolute;
+		top: 45%;
+		text-align: center;
+		font-style: italic;
+		font-size: 1.6em;
+		color: #fff;
+		top: 40%;
+		margin-left: 20%;
+		margin-right: 20%;
+		width: 60%;
+		letter-spacing: 0.05em;
+	}
+	z-index: 1001;
 }
 
 [data-tulito-id="info-pane"] {
@@ -812,6 +884,7 @@ a, .text a {
   }
 }
 
+/* iphone 4, show the bookmark message */
 @media only screen and (max-height: 450px) and (orientation : portrait) {
 	.title-bar {
 		height: 44px;
@@ -822,6 +895,22 @@ a, .text a {
 	}
 	.login-form {
 		top: 25%;
+	}
+	#other-links {
+		display: none;
+	}
+	.bookmark-message {
+		display: block;
+	}
+}
+
+/* iphone 5, show the bookmark message */
+@media screen and (device-aspect-ratio: 40/71) and (max-height: 500px) {
+	.welcome-message {
+		top: 25%;
+	}
+	.login-form {
+		top: 35%;
 	}
 	#other-links {
 		display: none;

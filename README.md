@@ -3,7 +3,9 @@ tulito
 
 Tulito is a template and library for building great mobile Web apps.
 
-At this time, TULITO IS NOT CONSIDERED PRODUCTION-READY CODE. There is much to refactor in tulito.js and I will be opening issues for these items in the coming weeks. Also, no testing has been done outside of Chrome, Safari, and PhoneGap.
+At this time, TULITO IS NEARING PRODUCTION-READY CODE. There is some to refactor in tulito.js and I will be opening issues for these items in the coming weeks. Also, no testing has been done outside of Chrome, Safari, and PhoneGap.
+
+Visit http://tulito.org to see demos.
 
 Why?
 ----
