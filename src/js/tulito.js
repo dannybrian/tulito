@@ -78,8 +78,8 @@
 				}, 100);
 			}
 			
-			// Apply tulito behaviors to all elements with a data-tulito-id or data-tulito-class attribute.
-			var elist = document.querySelectorAll('[data-tulito-id],[data-tulito-class]');
+			// Apply tulito behaviors to all elements with a data-tulito-class attribute.
+			var elist = document.querySelectorAll('[data-tulito-class]');
 			for (var i = 0; i < elist.length; ++i) {
 				this.apply(elist[i]);
 			}
