@@ -5,12 +5,15 @@
  * Licensed under the Apache 2 license */
 
 @screenWidth: 320px;  /* the width of the screen, changed automatically by tulito */
-@screenHeight: 960px; /* the height of the screen, changed automatically by tulito */
+@screenHeight: 568px; /* the height of the screen, changed automatically by tulito */
 
 @titleSpeed: 500ms;
 @cascadeSpeed: 200ms;
 
 @openedPaneGap: 50px;
+
+@wizardSpacing: (@screenHeight / 11);
+@wizardButtonSpacing: 75px;
 
 body {
   background-color: #fff;
@@ -610,7 +613,7 @@ a, .text a {
 
 [data-tulito-id="paybill-pane"] {
 	padding: 1.4em;
-	padding-top: 3em;
+	padding-top: 10%;
 	background-color: #457a87;
 	div {
 		color: #fff;
@@ -675,13 +678,13 @@ a, .text a {
 				-webkit-transform: translateY(35px);
 			}
 			&.option2 {
-				-webkit-transform: translateY(115px);
+				-webkit-transform: translateY(35px + @wizardButtonSpacing);
 			}
 			&.option3 {
-				-webkit-transform: translateY(195px);
+				-webkit-transform: translateY(35px + (@wizardButtonSpacing * 2));
 			}
 			&.option5 {
-				-webkit-transform: translateY(295px);
+				-webkit-transform: translateY(35px + (@wizardButtonSpacing * 3));
 			}
 			&.cascade {
 				&.shown {
@@ -692,13 +695,13 @@ a, .text a {
 					-webkit-transform: translateY(45px);
 				}
 				&.option2.shown {
-					-webkit-transform: translateY(125px);
+					-webkit-transform: translateY(45px + @wizardButtonSpacing);
 				}
 				&.option3.shown {
-					-webkit-transform: translateY(205px);
+					-webkit-transform: translateY(45px + (@wizardButtonSpacing * 2));
 				}
 				&.option5.shown {
-					-webkit-transform: translateY(305px);
+					-webkit-transform: translateY(45px + (@wizardButtonSpacing * 3));
 				}
 			}
 			&.selected {
@@ -790,7 +793,7 @@ a, .text a {
 	}
 	[data-tulito-toggle="info-pane"] {
 		position: absolute;
-		bottom: 20%;
+		bottom: 15%;
 		right: 20%;
 		background-color: #eee;
 		color: #666;
@@ -878,7 +881,25 @@ a, .text a {
 	.charge {
 		clear: both;
 	}
+	
+	&.wizard1 {
+		position: relative;
+		top: 0px;
+	}
+	&.wizard2 {
+		position: relative;
+		top: @wizardSpacing;
+	}
+	&.wizard3 {
+		position: relative;
+		top: (@wizardSpacing * 2);
+	}
+	&.wizard5 {
+		position: relative;
+		top: (@wizardSpacing * 4);
+	}
 }
+
 
 
 @media screen and (orientation: landscape) {
@@ -887,7 +908,7 @@ a, .text a {
   }
 }
 
-/* iphone 4, show the bookmark message */
+/* iphone 4, in-browser; show the bookmark message, and less information on each page */
 @media only screen and (max-height: 450px) and (orientation : portrait) {
 	.title-bar {
 		height: 44px;
@@ -904,6 +925,9 @@ a, .text a {
 	}
 	.bookmark-message {
 		display: block;
+	}
+	[data-tulito-id="recent-charges"] {
+		display: none;
 	}
 }
 
