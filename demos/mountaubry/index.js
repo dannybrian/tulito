@@ -118,11 +118,14 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 	
 	/* Manually handle the payment screen selections. */
-	var options = paypane.querySelectorAll('.option');
+	var options = paypane.querySelectorAll('.option:not(.submit)');
 	for (var i = 0; i < options.length; ++i) {
 		Hammer(options[i]).on("tap", function(e) {
 			var parent = e.srcElement.parentNode;
-			tulito._removeClass(parent.querySelector('.instruct'), 'shown');
+			var instruct = parent.querySelector('.instruct');
+			if (instruct) {
+				tulito._removeClass(parent.querySelector('.instruct'), 'shown');
+			}
 			var aoptions = parent.querySelectorAll('.option');
 			for (var ai = 0; ai < aoptions.length; ++ai) {
 				if (e.srcElement === aoptions[ai]) {

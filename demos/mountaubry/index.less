@@ -654,7 +654,7 @@ a, .text a {
 		}
 	}
 	
-	.choose-account, .choose-amount, .choose-date {
+	.choose-account, .choose-amount, .choose-date, .submit-pay {
 		position: relative;
 		.instruct {
 			transition: opacity @cascadeSpeed, -webkit-transform @cascadeSpeed;
@@ -665,7 +665,7 @@ a, .text a {
 				}
 			}
 		}
-		.account, .amount, .date {
+		.account, .amount, .date, .submit {
 			position: absolute;
 			top: 0;
 			opacity: 0;
@@ -680,6 +680,9 @@ a, .text a {
 			&.option3 {
 				-webkit-transform: translateY(195px);
 			}
+			&.option5 {
+				-webkit-transform: translateY(295px);
+			}
 			&.cascade {
 				&.shown {
 					opacity: 1;
@@ -693,6 +696,9 @@ a, .text a {
 				}
 				&.option3.shown {
 					-webkit-transform: translateY(205px);
+				}
+				&.option5.shown {
+					-webkit-transform: translateY(305px);
 				}
 			}
 			&.selected {
@@ -716,19 +722,15 @@ a, .text a {
 	}
 	
 	#submitpay-button {
-		position: absolute;
 		pointer-events: none;
 		opacity: 0;
-		bottom: 6%;
 		height: 50px;
 		text-align: center;
-		margin-top: 6px;
-		margin-right: 6px;
 		background-color: #3c723b;
 		font-size: 19px;
 		line-height: 50px;
 		text-align: middle;
-		width: 78%;
+		width: 100%;
 		&.active {
 			background-color: #427341;
 		}
