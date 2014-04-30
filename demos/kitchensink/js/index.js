@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	if (window.localStorage.getItem('notified') !== 'true') {
 		setTimeout(function() {
 			window.localStorage.setItem('notified', 'true');
-			tulito._openPane(document.querySelector('[data-tulito-id="top-pane"]'));
+			tulito.toggleOpen(document.querySelector('[data-tulito-id="top-pane"]'));
 		}, 1500);
 	}
 
