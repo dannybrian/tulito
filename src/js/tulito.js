@@ -57,7 +57,8 @@
 			// cascadeTouchDefault: true option.
 			
 			document.ontouchmove = function(e) {
-				if (!e.srcElement.hasAttribute('data-tulito-touchdefault')) {
+				var target = e.srcElement || e.target;
+				if (!target.hasAttribute('data-tulito-touchdefault')) {
 					e.preventDefault();
 				}
 			}
@@ -193,7 +194,8 @@
 				
 			// Panes move to expose back panes. So 
 			node.addEventListener('transitionend', function(e) {
-				if (e.srcElement.getAttribute('data-tulito-class') === 'pane' && e.propertyName.match(/-transform$/)) {
+				var target = e.srcElement || e.target;
+				if (target.getAttribute('data-tulito-class') === 'pane' && e.propertyName.match(/transform$/)) {
 					if (ncache._backpane) {
 						if (!self._hasClass(node, 'opened')) {
 							self._removeClass(ncache._backpane, 'shown');
@@ -218,7 +220,8 @@
 			
 			// Disable transitions when a drag begins, and show the proper back pane.
 			Hammer(node).on("dragstart", function(e) {
-				if (e.srcElement !== node) {
+				var target = e.srcElement || e.target;
+				if (target !== node) {
 					// console.log("dragstart: wrong node");
 					if (ncache['_allowchilddrags'] !== 'yes') {
 						return;
@@ -241,7 +244,8 @@
 			// Because there are two "modes" here (opening and closing), we need to handle this differently
 			// depending on whether the pane is already open or not.
 			Hammer(node).on("drag", function(e) {
-				if (e.srcElement !== node) {
+				var target = e.srcElement || e.target;
+				if (target !== node) {
 					// console.log("drag: wrong node");
 					if (ncache['_allowchilddrags'] !== 'yes') {
 						return;
@@ -265,7 +269,8 @@
 		
 			// When the drag ends, set the CSS transform to put the pane smoothly in its place.
 			Hammer(node).on("dragend", function(e) {
-				if (e.srcElement !== node) {
+				var target = e.srcElement || e.target;
+				if (target !== node) {
 					// console.log("dragemd: wrong node");
 					if (ncache['_allowchilddrags'] !== 'yes') {
 						return;
@@ -301,9 +306,10 @@
 			// Hidden panes get hidden (as in, CSS display: none) after a close transition.
 			// This keeps things moving smoothly.
 			node.addEventListener('transitionend', function(e) {
-				if (e.srcElement.getAttribute('data-tulito-class') === 'hidden-pane' && e.propertyName.match(/-transform$/)) {
-					if (!self._hasClass(e.srcElement, 'opened')) {
-						self._removeClass(e.srcElement, 'shown');
+				var target = e.srcElement || e.target;
+				if (target.getAttribute('data-tulito-class') === 'hidden-pane' && e.propertyName.match(/transform$/)) {
+					if (!self._hasClass(target, 'opened')) {
+						self._removeClass(target, 'shown');
 					}
 				}
 			}, false);
@@ -558,6 +564,7 @@
 			// let's leave the transition to CSS if we can
 			*/
 			
+			//console.log("_translate: " + x + ", " + y);
 			var ncache = this._getCache(node);
 			
 			var tx = ncache._tx + x;
@@ -589,9 +596,10 @@
 			*/
 			
 			node.style.webkitTransform = 'translate(' + tx + 'px,' + ty + 'px)' + 'translateZ(' + tz + 'px)';
-		    node.style.msTransform = 
+		    node.style.transform =
+			node.style.msTransform = 
 		    node.style.MozTransform = 
-		    node.style.OTransform = 'translateX(' + tx + 'px,' + ty + 'px)';	
+		    node.style.OTransform = 'translate(' + tx + 'px,' + ty + 'px)';	
 		}
 		
 		// Now, we're using the low-level APIs to set translate on the style for nodes. We're caching 
@@ -600,6 +608,8 @@
 		// having to cache lists of nodes, too. This will probably change in the future.
 		this._translateEnd = function(node, x, y, z, constraints, absolute) {
 			var ncache = this._getCache(node);
+			
+			//console.log("_translateEnd: " + node.getAttribute('id') + ", " + x + ", " + y);
 			
 			/*
 			if (node.getAttribute('data-tulito-class') === 'back-pane') {
@@ -624,22 +634,29 @@
 				ncache._tz = ncache._tz + z;
 			}
 			
+/*
+// I've totally forgotten why I was doing this.
+
 			node.style.webkitTransform = 'translate(0,0,0)';
-		    node.style.msTransform = 
+		    node.style.transform =
+			node.style.msTransform = 
 		    node.style.MozTransform = 
-		    node.style.OTransform = 'translateX(0,0)';	
+		    node.style.OTransform = 'translate(0,0)';	
+*/
 		}
 
 		this._resetTranslate = function(node, keepcache) {
 			this._removeClass(node, 'notransition');
-			var ncache = this._getCache(node);
+			//console.log("_resetTranslate");
 			
+			var ncache = this._getCache(node);
 			if (keepcache !== true) {
 				ncache._tx = 0;
 				ncache._ty = 0;
 				ncache._tz = 0;
 			}
 			setTimeout(function() {
+				//node.style.transform =
 				node.style.webkitTransform =
 				node.style.msTransform = 
 			    node.style.MozTransform = 
@@ -1087,6 +1104,7 @@
 				if (tpanegap === 'full') { self._addClass(node, 'full-pane'); }
 				ncache._opened = true;
 				
+
 				if (pos === "left") {
 					self._translateEnd(node, -(panegap), 0, 0, null, true);
 				}
@@ -1099,11 +1117,19 @@
 				else if (pos === "down") {
 					self._translateEnd(node, 0, -(panegap), 0, null, true);
 				}
-			
+		
 				if (self.options.onHiddenPaneShown) {
 					self.options.onHiddenPaneShown(node);
 				}
-				setTimeout(function() { self._addClass(node, 'opened'); }, 1);
+
+				// firefox seems less able to see DOM updates quickly.
+				if (navigator.userAgent.match(/firefox/i)) {
+					setTimeout(function() { self._addClass(node, 'opened'); }, 100);
+				}
+				else
+				{
+					setTimeout(function() { self._addClass(node, 'opened'); }, 1);
+				}
 			}
 		};
 		

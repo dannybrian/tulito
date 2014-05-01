@@ -206,6 +206,16 @@ li[data-tulito-class="button"]
 	overflow: hidden; /* important to keeping .app static regardless of what happens in children! */
 }
 
+/* unsure why firefox dislikes the 100% height in this case, 
+   but a pixel height seems to work. */
+@-moz-document url-prefix() {
+	[data-tulito-class$="pane"]
+	{
+    	height: @screenHeight;
+	}
+}
+
+
 /*
    STANDARD PANES 
 
@@ -537,6 +547,7 @@ body:after {
 /* MIXINS */
 
 .transition (@attr: all, @time: 0.2s) {
+	transition: @attr @time ease;
 	-webkit-transition: @attr @time ease;
 	-moz-transition: @attr @time ease;
 }
@@ -544,6 +555,7 @@ body:after {
 .translate (@x, @y, @z) {
 	transform: translate(@x, @y) translateZ(@z);
 	-ms-transform: translate(@x, @y) translateZ(@z);
+	-moz-transform: translate(@x, @y) translateZ(@z);
 	-webkit-transform: translate(@x, @y) translateZ(@z);
 }
 

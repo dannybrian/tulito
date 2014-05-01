@@ -75,7 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	/* Of course, you could use a JavaScript framework with binding to make stuff like 
 	   this simpler. */
 	Hammer(document.querySelector('input[type="checkbox"]')).on("tap", function(e) {
-		if (e.srcElement.checked === false) {
+		var target = e.srcElement || e.target;
+		if (target.checked === false) {
 			tulito._addClass(document.querySelector('#save-username .fa-check'), 'shown');
 		}
 		else
@@ -121,16 +122,17 @@ document.addEventListener('DOMContentLoaded', function() {
 	var options = paypane.querySelectorAll('.option:not(.submit)');
 	for (var i = 0; i < options.length; ++i) {
 		Hammer(options[i]).on("tap", function(e) {
-			var parent = e.srcElement.parentNode;
+			var target = e.srcElement || e.target;
+			var parent = target.parentNode;
 			var instruct = parent.querySelector('.instruct');
 			if (instruct) {
 				tulito._removeClass(parent.querySelector('.instruct'), 'shown');
 			}
 			var aoptions = parent.querySelectorAll('.option');
 			for (var ai = 0; ai < aoptions.length; ++ai) {
-				if (e.srcElement === aoptions[ai]) {
-					tulito._addClass(e.srcElement, 'selected');
-					tulito._removeClass(e.srcElement, 'shown');
+				if (target === aoptions[ai]) {
+					tulito._addClass(target, 'selected');
+					tulito._removeClass(target, 'shown');
 				}
 				else
 				{
@@ -175,14 +177,15 @@ document.addEventListener('DOMContentLoaded', function() {
 	var panes = document.querySelectorAll('[data-tulito-class="hidden-pane"]');
 	for (var i = 0; i < panes.length; ++i) {
 		panes[i].addEventListener('transitionend', function(e) {
-			if (e.srcElement.getAttribute('data-tulito-class') === 'hidden-pane' && e.propertyName.match(/-transform$/)) {
-				if (tulito._hasClass(e.srcElement, 'opened')) {
-					cascade(e.srcElement);
+			var target = e.srcElement || e.target;
+			if (target.getAttribute('data-tulito-class') === 'hidden-pane' && e.propertyName.match(/transform$/)) {
+				if (tulito._hasClass(target, 'opened')) {
+					cascade(target);
 				}
 				// and reset stuff when it closes.
 				else
 				{
-					uncascade(e.srcElement);
+					uncascade(target);
 				}
 			}
 		}, false);

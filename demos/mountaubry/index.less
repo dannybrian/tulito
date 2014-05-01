@@ -57,7 +57,7 @@ body {
 	 	width: 100%;
 		height: 100%;
 		z-index: 2;
-		-webkit-transform: translate(0, 0, 0);
+		.translate(0, 0, 0);
 		transition: width @titleSpeed, height @titleSpeed;
 		img {
 			width: 90%;
@@ -69,7 +69,7 @@ body {
 	
 	.left:not(.menu-button) {
 		margin: 0;
-		-webkit-transform: translate(0, 0, 0);
+		.translate(0, 0, 0);
 		transition: width @titleSpeed;
 		width: 46%;
 		height: 100%;
@@ -80,7 +80,7 @@ body {
 	}
 	.right:not(.menu-button) {
 		margin: 0;
-		-webkit-transform: translate(0, 0, 0);
+		.translate(0, 0, 0);
 		transition: width @titleSpeed;
 		width: 54%;
 		height: 100%;
@@ -97,7 +97,7 @@ body {
 			color: #fff;
 			font-size: 0.8em;
 			font-weight: 600;
-			-webkit-transition: opacity 300ms;
+			.transition(opacity 300ms);
 			&.paused {
 				opacity: 0;
 			}
@@ -201,13 +201,12 @@ div.text, .app p,  {
 
 input {
 	-webkit-appearance: none;
-	-webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
-    border-radius: 2px;
+	.border-radius(2px);
 	background-color: #f2f2f2;
 	border: none;
 	color: #666;
 	-webkit-box-shadow: inset 0 0 2px #ddd;
+	-moz-box-shadow: inset 0 0 2px #ddd;
 	box-shadow: inset 0 0 2px #ddd;
 	
 	&[type="text"], &[type="password"] {
@@ -303,12 +302,12 @@ hr {
 .cascade:not(.account) {
 	margin: 0 !important;
 	padding: 0;
-	transition: opacity @cascadeSpeed, -webkit-transform @cascadeSpeed;
+	.transition(opacity @cascadeSpeed ease, transform @cascadeSpeed ease);
 	opacity: 0;
-	-webkit-transform: translateY(-15px);
+	.translate(0, -15px, 0);
 	&.shown {
 		opacity: 1;
-		-webkit-transform: translateY(0);;
+		.translate(0, 0, 0);
 	} 
 }
 
@@ -439,6 +438,15 @@ a, .text a {
 .vcenter-cont {
 	display: table;
 	height: 100%
+}
+
+/* unsure why firefox dislikes the 100% height in this case, 
+   but a pixel height seems to work. */
+@-moz-document url-prefix() {
+	.vcenter-cont
+	{
+    	height: @screenHeight;
+	}
 }
 
 .vcenter {
@@ -660,7 +668,7 @@ a, .text a {
 	.choose-account, .choose-amount, .choose-date, .submit-pay {
 		position: relative;
 		.instruct {
-			transition: opacity @cascadeSpeed, -webkit-transform @cascadeSpeed;
+		    .transition(opacity @cascadeSpeed ease, transform @cascadeSpeed ease);
 			opacity: 0;
 			&.cascade {
 				&.shown {
@@ -669,22 +677,24 @@ a, .text a {
 			}
 		}
 		.account, .amount, .date, .submit {
+			display: inline-block;
 			position: absolute;
 			top: 0;
 			opacity: 0;
 			pointer-events: none;
-			transition: opacity @cascadeSpeed, -webkit-transform @cascadeSpeed;
+			.transition(opacity @cascadeSpeed ease, transform @cascadeSpeed ease);
+
 			&.option1 {
-				-webkit-transform: translateY(35px);
+				.translate(0, 35px, 0);
 			}
 			&.option2 {
-				-webkit-transform: translateY(35px + @wizardButtonSpacing);
+				.translate(0, (35px + @wizardButtonSpacing), 0);
 			}
 			&.option3 {
-				-webkit-transform: translateY(35px + (@wizardButtonSpacing * 2));
+				.translate(0, (35px + (@wizardButtonSpacing * 2)), 0);
 			}
 			&.option5 {
-				-webkit-transform: translateY(35px + (@wizardButtonSpacing * 3));
+				.translate(0, (35px + (@wizardButtonSpacing * 3)), 0);
 			}
 			&.cascade {
 				&.shown {
@@ -692,21 +702,21 @@ a, .text a {
 					pointer-events: auto;
 				}
 				&.option1.shown {
-					-webkit-transform: translateY(45px);
+					.translate(0, 45px, 0);
 				}
 				&.option2.shown {
-					-webkit-transform: translateY(45px + @wizardButtonSpacing);
+					.translate(0, (45px + @wizardButtonSpacing), 0);
 				}
 				&.option3.shown {
-					-webkit-transform: translateY(45px + (@wizardButtonSpacing * 2));
+					.translate(0, (45px + (@wizardButtonSpacing * 2)), 0);
 				}
 				&.option5.shown {
-					-webkit-transform: translateY(45px + (@wizardButtonSpacing * 3));
+					.translate(0, (45px + (@wizardButtonSpacing * 3)), 0);
 				}
 			}
 			&.selected {
 				opacity: 1;
-				-webkit-transform: translateY(0);
+				.translate(0, 0, 0);
 			}
 		}
 	}
@@ -740,13 +750,13 @@ a, .text a {
 		&:active {
 			background-color: #427341;
 		}
-		transition: opacity @cascadeSpeed, -webkit-transform @cascadeSpeed;
-		-webkit-transform: translateY(20px);
+		.transition(opacity @cascadeSpeed ease, transform @cascadeSpeed ease);
+		.translate(0, 20px, 0);
 		&.cascade {
 			&.shown {
 				opacity: 1;
 				pointer-events: auto;
-				-webkit-transform: translateY(0);
+				.translate(0,0,0);
 			}
 		}
 	}
@@ -835,6 +845,15 @@ a, .text a {
 	}
 }
 
+/* unsure why firefox dislikes the 100% height in this case, 
+   but a pixel height seems to work. */
+@-moz-document url-prefix() {
+	.warning
+	{
+    	height: @screenHeight;
+	}
+}
+
 .tclose {
 	color: #999;
 	left: -22px;
@@ -900,6 +919,45 @@ a, .text a {
 	}
 }
 
+
+/* MIXINS
+.transition (@attr: all, @time: 0.2s) {
+	transition: @attr @time ease;
+	-webkit-transition: @attr @time ease;
+	-moz-transition: @attr @time ease;
+}
+*/
+
+.translate (@x, @y, @z) {
+	transform: translate(@x, @y) translateZ(@z);
+	-ms-transform: translate(@x, @y) translateZ(@z);
+	-moz-transform: translate(@x, @y) translateZ(@z);
+	-webkit-transform: translate(@x, @y) translateZ(@z);
+}
+
+.border-radius (@radius: 5px) {
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+    border-radius: @radius;
+}
+
+.box-shadow (@x: 0px, @y: 3px, @blur: 4px, @alpha: 0.3) {
+    -webkit-box-shadow: @x @y @blur rgba(0, 0, 0, @alpha);
+    -moz-box-shadow: @x @y @blur rgba(0, 0, 0, @alpha);
+    box-shadow: @x @y @blur rgba(0, 0, 0, @alpha);
+}
+
+/* from LESS Hat https://github.com/madebysource/lesshat */
+.transition(...) {
+  @process_webkit: ~`(function(e){e=e||"all 0 ease 0";var r=["background-size","border-radius","border-bottom-left-radius","border-bottom-right-radius","border-top-left-radius","border-top-right-radius","box-shadow","column","transform","filter"],t="-webkit-",n=/(?:\d)(?:ms|s)/gi,a=/(?:\s|^)(\.?\d+\.?\d*)(?![^(]*\)|\w|%)/gi;return/^[^, ]*,/.test(e)&&(e=e.replace(/(?:,)(?![^(]*\))/g,"")),r.forEach(function(r){-1!==e.indexOf(r)&&(e=e.replace(new RegExp(r,"g"),function(e){return t+e}))}),n.test(e)||"0"===e||(e=e.replace(a,function(e){return e+=parseFloat(e,10)>10?"ms":"s"})),e})((function(){var e="@{arguments}";return e=e.replace(/^\[|\]$/g,"")})())`;
+  @process_moz: ~`(function(e){e=e||"all 0 ease 0";var r=["background-size","box-shadow","column","transform","filter"],t="-moz-",n=/(?:\d)(?:ms|s)/gi,a=/(?:\s|^)(\.?\d+\.?\d*)(?![^(]*\)|\w|%)/gi;return/^[^, ]*,/.test(e)&&(e=e.replace(/(?:,)(?![^(]*\))/g,"")),r.forEach(function(r){-1!==e.indexOf(r)&&(e=e.replace(new RegExp(r,"g"),function(e){return t+e}))}),n.test(e)||"0"===e||(e=e.replace(a,function(e){return e+=parseFloat(e,10)>10?"ms":"s"})),e})((function(){var e="@{arguments}";return e=e.replace(/^\[|\]$/g,"")})())`;
+  @process_opera: ~`(function(e){e=e||"all 0 ease 0";var r=["transform"],t="-o-",n=/(?:\d)(?:ms|s)/gi,a=/(?:\s|^)(\.?\d+\.?\d*)(?![^(]*\)|\w|%)/gi;return/^[^, ]*,/.test(e)&&(e=e.replace(/(?:,)(?![^(]*\))/g,"")),r.forEach(function(r){-1!==e.indexOf(r)&&(e=e.replace(new RegExp(r,"g"),function(e){return t+e}))}),n.test(e)||"0"===e||(e=e.replace(a,function(e){return e+=parseFloat(e,10)>10?"ms":"s"})),e})((function(){var e="@{arguments}";return e=e.replace(/^\[|\]$/g,"")})())`;
+  @process: ~`(function(e){e=e||"all 0 ease 0";var r=["-webkit-","-moz-","-o-",""],t=["column","transform","filter"],n=/(?:\d)(?:ms|s)/gi,a=/(?:\s|^)(\.?\d+\.?\d*)(?![^(]*\)|\w|%)/gi;/^[^, ]*,/.test(e)&&(e=e.replace(/(?:,)(?![^(]*\))/g,""));var c=e.split(/(?:,)(?![^(]*\))/g);return c.forEach(function(e,n){t.forEach(function(t){-1!==e.indexOf(t)&&(c[n]="",r.forEach(function(a,u){c[n]+=e.trim().replace(new RegExp(t,"g"),function(e){return a+e}),u<r.length-1&&(c[n]+=",")}))})}),e=c.join(","),n.test(e)||"0"===e||(e=e.replace(a,function(e){return e+=parseFloat(e,10)>10?"ms":"s"})),e})((function(){var e="@{arguments}";return e=e.replace(/^\[|\]$/g,"")})())`;
+  -webkit-transition: @process_webkit;
+  -moz-transition: @process_moz;
+  -o-transition: @process_opera;
+  transition: @process;
+}
 
 
 @media screen and (orientation: landscape) {
