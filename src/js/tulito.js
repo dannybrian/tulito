@@ -69,6 +69,7 @@
 				window.addEventListener( 'load', self._orient, false );
 				if (!this.options.noReorient) {
 					window.addEventListener( 'orientationchange', self._orient, false );
+					//window.addEventListener( 'resize', self._orient, false );
 				}
 			}
 			else
@@ -678,6 +679,12 @@
 				viewportmeta.content = viewportmeta.content.replace(/height=[^,]+/, 'height=' + window.innerHeight);
 			}
 
+			/* iOS 7 landscape bug */
+			if (navigator.userAgent.match(/OS 7_\d/i) && !window.navigator.standalone) {
+				// alert("inner: " + innerHeight + ", outer: " + window.outerHeight);
+				window.scrollTo(0,0);
+			}
+			
 			less.modifyVars({
 				/* FIXME: allow em/rem units here, but that requires lots of changes to the handlers. */
 			    '@screenWidth': window.innerWidth + "px",
