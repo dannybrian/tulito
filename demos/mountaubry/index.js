@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	   its transition. */
 	var panes = document.querySelectorAll('[data-tulito-class="hidden-pane"]');
 	for (var i = 0; i < panes.length; ++i) {
-		panes[i].addEventListener('transitionend', function(e) {
+		panes[i].addEventListener(_transEndEventName, function(e) {
 			var target = e.srcElement || e.target;
 			if (target.getAttribute('data-tulito-class') === 'hidden-pane' && e.propertyName.match(/transform$/)) {
 				if (tulito._hasClass(target, 'opened')) {
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	/* The payment screen is *extra-fancy*, and we need to clean up the manual cascades there
 	   on close. */
-	paypane.addEventListener('transitionend', function(e) {
+	paypane.addEventListener(_transEndEventName, function(e) {
 		setTimeout(function() {
 			if (!tulito._hasClass(paypane, 'opened')) {
 				var tmp_cascades = paypane.querySelectorAll('.choose-amount .instruct, .choose-amount .amount.cascade, .choose-date .instruct, .choose-date .date.cascade, #submitpay-button.cascade');
