@@ -6,7 +6,7 @@
 
 (function(window, undefined) {
 	'use strict';
-
+    
 	var swipeDist = 70; // the number in pixels to treat as a pane swipe.
 	
 	// Here we cache references to elements for events and relationships between panes, for example.
@@ -156,14 +156,16 @@
 		
 		// Experimental, but I don't see a reason to include this. Just use iScroll and register
 		// your scrollables.
-		this._inits['scrollable'] = function (node) {
+		/*
+        this._inits['scrollable'] = function (node) {
 				var scroller = new IScroll(node, { eventPassthrough: true, scrollY: true, scrollX: false, snap: true, snapStepX: window.innerWidth - 31, deceleration: 0.008 });
 				setInterval(function() {
 					console.log(scroller);
 					scroller.refresh();
 				}, 2000);
 		};
-			
+		*/
+        
 		// These are the functional initializers for node behaviors.
 		this._inits['button'] = function (node) {
 			// All three of these will take place with a normal tap.
@@ -305,9 +307,11 @@
 			var ncache = self._getCache(node);
 			
 			// Hidden panes get hidden (as in, CSS display: none) after a close transition.
-			// This keeps things moving smoothly.
+			// This keeps things moving smoothly.      
 			node.addEventListener(_transEndEventName, function(e) {
 				var target = e.srcElement || e.target;
+                //console.log("EVENT: ");
+                //console.log(e);
 				if (target.getAttribute('data-tulito-class') === 'hidden-pane' && e.propertyName.match(/transform$/)) {
 					if (!self._hasClass(target, 'opened')) {
 						self._removeClass(target, 'shown');
@@ -1038,6 +1042,9 @@
 		};
 		
 		this._toggleHiddenPane = function (e, node, ncache) {
+            
+            //console.log("_toggleHiddenPane start: " + ncache._opened);
+            
 			var pos = node.getAttribute('data-tulito-pos');
 			
 			// They can shove other panes as they move.
@@ -1045,7 +1052,7 @@
 		       see that the up/down hidden pane drags are smoother than the left/right drags, and this 
 		       is because it takes a moment for the gesture delta to catch up to the extra distance.
 		       But so far, it's not working as well for left/right. */
-		
+		               
 			var shove = node.getAttribute('data-tulito-shove');
 			var panegap;
 			var tpanegap = panegap = node.getAttribute('data-tulito-panegap');
@@ -1109,8 +1116,8 @@
 				// show this one
 				self._addClass(node, 'shown');
 				if (tpanegap === 'full') { self._addClass(node, 'full-pane'); }
-				ncache._opened = true;
-				
+                
+                ncache._opened = true;
 
 				if (pos === "left") {
 					self._translateEnd(node, -(panegap), 0, 0, null, true);
@@ -1135,9 +1142,13 @@
 				}
 				else
 				{
-					setTimeout(function() { self._addClass(node, 'opened'); }, 1);
+                // okay, so does chrome. How lame.
+					setTimeout(function() { self._addClass(node, 'opened'); }, 100);
 				}
 			}
+            
+            //console.log("_toggleHiddenPane end: " + ncache._opened);
+
 		};
 		
 		this._toggleBackPane = function (e, node, ncache) {
