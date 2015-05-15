@@ -207,7 +207,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	var paybutton = paypane.querySelector('[data-tulito-id="submitpay-button"]')
 	var payloader = paypane.querySelector('.loader');
 	Hammer(paybutton).on("tap", function(e) {
-		tulito._addClass(loader, 'full shown');
+		tulito._addClass(loader, 'full');
+        tulito._addClass(loader, 'shown');
 		setTimeout(function() {
 			tulito._addClass(loader, 'opened');			
 		}, 1);

@@ -545,17 +545,15 @@
 		
 		// Utility methods to add and remove classes.
 		this._addClass = function( node, cname ) {
-			node.className = node.className + ' ' + cname;
+            node.classList.add(cname);
 		}
 
 		this._hasClass = function( node, cname ) {
-			var regex = new RegExp('\\s*\\b' + cname + '\\b', 'g');
-			return regex.test(node.className);
+            return node.classList.contains(cname);
 		}
 		
 		this._removeClass = function( node, cname ) {
-			var regex = new RegExp('\\s*\\b' + cname + '\\b', 'g');
-			node.className = node.className.replace(regex,'');
+            node.classList.remove(cname);
 		}
 		
 		this._translate = function(node, x, y, z, constraints) {
